@@ -11,6 +11,13 @@
       <PackageReference Include="FluentValidation" Version="9.3.0" />
       <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
       <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YAFF.Business\YAFF.Business.csproj" />
+      <ProjectReference Include="..\YAFF.Core\YAFF.Core.csproj" />
+      <ProjectReference Include="..\YAFF.Data\YAFF.Data.csproj" />
     </ItemGroup>
 
 </Project>

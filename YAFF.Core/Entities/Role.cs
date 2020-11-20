@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YAFF.Data.Entities
+namespace YAFF.Core.Entities
 {
-    public class Tag
+    public class Role
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

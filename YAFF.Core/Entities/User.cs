@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YAFF.Data.Entities
+namespace YAFF.Core.Entities
 {
     public class User
     {
@@ -21,5 +21,6 @@ namespace YAFF.Data.Entities
         public IEnumerable<Post> Posts { get; set; }
         public IEnumerable<PostComment> PostComments { get; set; }
         public IEnumerable<PostLike> LikedPosts { get; set; }
+        public IEnumerable<RefreshToken> RefreshTokens { get; set; }
     }
 }

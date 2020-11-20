@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YAFF.Data.Entities
+namespace YAFF.Core.Entities
 {
     public class Post
     {

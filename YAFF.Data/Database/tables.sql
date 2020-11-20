@@ -21,13 +21,26 @@ create table Users
     Nickname         varchar(255) not null,
     RegistrationDate date         not null,
     Email            varchar(255) not null,
-    EmailConfirmed   bool         not null,
-    IsBanned         bool         not null,
+    EmailConfirmed   bool         not null default false,
+    IsBanned         bool         not null default false,
     BanLiftDate      timestamp,
     PasswordHash     char(60)     not null,
     AvatarId         uuid
         constraint users_avatar__fk
             references Photos
+);
+
+
+drop table if exists RefreshTokens;
+create table RefreshTokens
+(
+    Id          uuid primary key,
+    Token       char(32)  not null,
+    DateCreated timestamp not null,
+    DateExpires timestamp not null,
+    UserId      uuid
+        constraint user_token__fk
+            references Users
 );
 
 

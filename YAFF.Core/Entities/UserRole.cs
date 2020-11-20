@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YAFF.Data.Entities
+namespace YAFF.Core.Entities
 {
     public class UserRole
     {

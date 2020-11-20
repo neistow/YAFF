@@ -1,4 +1,6 @@
 using System.Globalization;
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +8,10 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using YAFF.Api.Extensions;
+using YAFF.Business.Commands.Users;
+using YAFF.Core.Mapper;
+using YAFF.Data.Extensions;
 
 namespace YAFF.Api
 {
@@ -34,7 +40,17 @@ namespace YAFF.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.BuildCors();
+
             services.AddControllers();
+
+            services.AddJwtBearerAuthentication(Configuration);
+
+            services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
+            services.AddMediatR(typeof(Startup).Assembly, typeof(CreateUserCommandHandler).Assembly);
+
+            services.AddDbConnectionFactory();
+            services.AddRepositories();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -51,6 +67,11 @@ namespace YAFF.Api
 
             app.UseStatusCodePages();
             app.UseRouting();
+
+            app.UseCors();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
