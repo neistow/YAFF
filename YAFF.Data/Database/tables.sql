@@ -19,12 +19,12 @@ create table Users
     Id               uuid
         primary key,
     Nickname         varchar(255) not null,
-    RegistrationDate date         not null,
+    RegistrationDate timestamp    not null,
     Email            varchar(255) not null,
     EmailConfirmed   bool         not null default false,
     IsBanned         bool         not null default false,
     BanLiftDate      timestamp,
-    PasswordHash     char(60)     not null,
+    PasswordHash     text     not null,
     AvatarId         uuid
         constraint users_avatar__fk
             references Photos
@@ -35,12 +35,12 @@ drop table if exists RefreshTokens;
 create table RefreshTokens
 (
     Id          uuid primary key,
-    Token       char(32)  not null,
+    Token       text  not null,
     DateCreated timestamp not null,
     DateExpires timestamp not null,
     UserId      uuid
         constraint user_token__fk
-            references Users
+            references Users on delete no action
 );
 
 

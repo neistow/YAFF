@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using YAFF.Core.Interfaces.Data;
+﻿using System.Data;
 
 namespace YAFF.Core.Interfaces.Repositories
 {
-    public abstract class Repository<T> : IRepository<T> where T : class
+    public abstract class Repository
     {
-        protected readonly IDbConnectionFactory ConnectionFactory;
+        protected IDbTransaction Transaction { get; }
+        protected IDbConnection Connection => Transaction.Connection;
 
-        protected Repository(IDbConnectionFactory connectionFactory)
+        public Repository(IDbTransaction transaction)
         {
-            ConnectionFactory = connectionFactory;
+            Transaction = transaction;
         }
-
-        public abstract Task<T> GetByIdAsync(Guid id);
-        public abstract Task<IReadOnlyList<T>> GetAllAsync();
-        public abstract Task<int> AddAsync(T entity);
-        public abstract Task<int> UpdateAsync(T entity);
-        public abstract Task<int> DeleteAsync(Guid id);
     }
 }

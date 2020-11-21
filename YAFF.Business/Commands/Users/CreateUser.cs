@@ -7,6 +7,7 @@ using YAFF.Business.Common;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
+using YAFF.Core.Interfaces.Data;
 using YAFF.Core.Interfaces.Repositories;
 
 namespace YAFF.Business.Commands.Users
@@ -20,18 +21,18 @@ namespace YAFF.Business.Commands.Users
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserInfo>>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CreateUserCommandHandler(IUserRepository userRepository, IMapper mapper)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<Result<UserInfo>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var userInDb = await _userRepository.GetUserByEmailAsync(request.Email);
+            var userInDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
             if (userInDb.Id != Guid.Empty)
             {
                 return Result<UserInfo>.Failure(nameof(request.Email), "User with such email already exists");
@@ -45,11 +46,9 @@ namespace YAFF.Business.Commands.Users
                 PasswordHash = PasswordHasher.HashPassword(request.Password),
                 RegistrationDate = DateTime.UtcNow
             };
-            var result = await _userRepository.AddAsync(user);
-            if (result != 1)
-            {
-                return Result<UserInfo>.Failure();
-            }
+            
+            await _unitOfWork.UserRepository.AddAsync(user);
+            _unitOfWork.Commit();
 
             // TODO: send register verification email
 

@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using YAFF.Core.Entities;
 
 namespace YAFF.Core.Interfaces.Repositories
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository
     {
+        Task<User> GetByIdAsync(Guid id);
         Task<User> GetUserByEmailAsync(string email);
+        Task<int> AddAsync(User entity);
     }
 }

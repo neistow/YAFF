@@ -7,9 +7,9 @@ namespace YAFF.Data.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddRepositories(this IServiceCollection services)
+        public static void AddUnitOfWork(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public static void AddDbConnectionFactory(this IServiceCollection services)

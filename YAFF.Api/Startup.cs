@@ -50,7 +50,7 @@ namespace YAFF.Api
             services.AddMediatR(typeof(Startup).Assembly, typeof(CreateUserCommandHandler).Assembly);
 
             services.AddDbConnectionFactory();
-            services.AddRepositories();
+            services.AddUnitOfWork();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
