@@ -11,10 +11,10 @@ namespace YAFF.Data.Repositories
 {
     public class UserRepository : Repository, IUserRepository
     {
-        public UserRepository(IDbTransaction transaction) : base(transaction)
+        public UserRepository(IDbConnection connection) : base(connection)
         {
         }
-
+        
         public async Task<User> GetByIdAsync(Guid id)
         {
             var sql1 = @"select * from get_user_by_id(@id)";

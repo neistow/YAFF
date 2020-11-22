@@ -11,10 +11,10 @@ namespace YAFF.Data.Repositories
 {
     public class RefreshTokenRepository : Repository, IRefreshTokenRepository
     {
-        public RefreshTokenRepository(IDbTransaction transaction) : base(transaction)
+        public RefreshTokenRepository(IDbConnection connection) : base(connection)
         {
         }
-
+        
         public async Task<int> AddAsync(RefreshToken entity)
         {
             var sql = @"insert into refreshtokens (id, token, datecreated, dateexpires, userid)

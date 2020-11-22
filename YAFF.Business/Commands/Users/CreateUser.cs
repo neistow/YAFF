@@ -48,7 +48,6 @@ namespace YAFF.Business.Commands.Users
             };
             
             await _unitOfWork.UserRepository.AddAsync(user);
-            _unitOfWork.Commit();
 
             // TODO: send register verification email
 

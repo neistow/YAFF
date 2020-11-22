@@ -4,12 +4,11 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public abstract class Repository
     {
-        protected IDbTransaction Transaction { get; }
-        protected IDbConnection Connection => Transaction.Connection;
+        protected IDbConnection Connection { get; }
 
-        public Repository(IDbTransaction transaction)
+        protected Repository(IDbConnection connection)
         {
-            Transaction = transaction;
+            Connection = connection;
         }
     }
 }

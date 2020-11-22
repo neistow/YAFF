@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
+using YAFF.Business;
 using YAFF.Business.Commands.Users;
 using YAFF.Core.Mapper;
 using YAFF.Data.Extensions;
@@ -48,7 +49,7 @@ namespace YAFF.Api
 
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
             services.AddMediatR(typeof(Startup).Assembly, typeof(CreateUserCommandHandler).Assembly);
-
+            
             services.AddDbConnectionFactory();
             services.AddUnitOfWork();
         }

@@ -12,7 +12,7 @@ namespace YAFF.Data.Repositories
 {
     public class RoleRepository : Repository, IRoleRepository
     {
-        public RoleRepository(IDbTransaction transaction) : base(transaction)
+        public RoleRepository(IDbConnection connection) : base(connection)
         {
         }
 

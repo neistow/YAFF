@@ -80,8 +80,6 @@ namespace YAFF.Business.Commands.Auth
             };
 
             await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
-            _unitOfWork.Commit();
-
 
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
             {

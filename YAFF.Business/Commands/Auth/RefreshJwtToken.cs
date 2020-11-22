@@ -73,8 +73,6 @@ namespace YAFF.Business.Commands.Auth
 
             await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
             await _unitOfWork.RefreshTokenRepository.DeleteAsync(token.Id);
-            _unitOfWork.Commit();
-
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
                 {JwtToken = jwtToken, RefreshToken = refreshToken.Token});
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO;
 using YAFF.Api.Extensions;
+using YAFF.Api.Helpers;
 using YAFF.Business.Commands.Auth;
 using YAFF.Business.Commands.Users;
 
@@ -48,6 +49,7 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse(200));
         }
 
+        [EnableTransaction]
         [HttpPost("[action]")]
         public async Task<IActionResult> RefreshToken(RefreshTokenDto request)
         {

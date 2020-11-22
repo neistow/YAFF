@@ -3,9 +3,6 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.Extensions.Options;
-using YAFF.Core.Configs;
-using YAFF.Core.Entities;
 
 namespace YAFF.Business.Commands.Auth
 {
