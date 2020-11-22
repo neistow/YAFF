@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,13 +21,13 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Register(LoginDto loginDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             var result = await Mediator.Send(new CreateUserCommand
             {
-                Email = loginDto.Email,
-                NickName = loginDto.Nickname,
-                Password = loginDto.Password
+                Email = registerDto.Email,
+                NickName = registerDto.Nickname,
+                Password = registerDto.Password
             });
 
             return !result.Succeeded
@@ -36,7 +37,7 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var result = await Mediator.Send(new AuthenticateUserCommand
             {
@@ -51,18 +52,17 @@ namespace YAFF.Api.Controllers
 
         [EnableTransaction]
         [HttpPost("[action]")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenDto request)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
         {
             if (string.IsNullOrWhiteSpace(request.Token))
             {
                 return Unauthorized();
             }
 
-            // In jwt payload user name is set to user Id
-            var userId = HttpContext.User.Identity.Name;
+            var userId = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
             var result =
                 await Mediator.Send(new RefreshTokenCommand
-                    {UserId = Guid.Parse(userId), RefreshToken = request.Token});
+                    {UserId = Guid.Parse(userId!.Value), RefreshToken = request.Token});
 
             return !result.Succeeded
                 ? (IActionResult) Unauthorized()
@@ -72,7 +72,8 @@ namespace YAFF.Api.Controllers
         [HttpGet]
         public IActionResult Test()
         {
-            return Ok("Yep");
+            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Name");
+            return Ok($"You are authorised as {username!.Value}");
         }
     }
 }

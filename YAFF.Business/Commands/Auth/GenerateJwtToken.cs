@@ -16,6 +16,7 @@ namespace YAFF.Business.Commands.Auth
     public class GenerateJwtTokenCommand : IRequest<string>
     {
         public Guid UserId { get; set; }
+        public string UserName { get; set; }
         public string UserEmail { get; set; }
         public IEnumerable<string> Roles { get; set; }
     }
@@ -33,8 +34,9 @@ namespace YAFF.Business.Commands.Auth
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, request.UserId.ToString()),
-                new Claim(ClaimTypes.Email, request.UserEmail),
+                new Claim("Id", request.UserId.ToString()),
+                new Claim("Name", request.UserName),
+                new Claim("Email", request.UserEmail),
             };
             claims.AddRange(request.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
 

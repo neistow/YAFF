@@ -57,6 +57,7 @@ namespace YAFF.Business.Commands.Auth
             var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand
             {
                 UserId = user.Id,
+                UserName = user.NickName,
                 UserEmail = user.Email,
                 Roles = userRoles.Select(r => r.Name)
             });
