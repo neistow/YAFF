@@ -38,7 +38,7 @@ namespace YAFF.Business.Commands.Auth
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
-            if (user.Id == Guid.Empty)
+            if (user == null)
             {
                 return Result<UserAuthenticatedDto>.Failure(nameof(request.Email),
                     "Invalid email");

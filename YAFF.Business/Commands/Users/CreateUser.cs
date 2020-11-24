@@ -33,7 +33,7 @@ namespace YAFF.Business.Commands.Users
         public async Task<Result<UserInfo>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var userInDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
-            if (userInDb.Id != Guid.Empty)
+            if (userInDb != null)
             {
                 return Result<UserInfo>.Failure(nameof(request.Email), "User with such email already exists");
             }

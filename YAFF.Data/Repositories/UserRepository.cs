@@ -20,7 +20,7 @@ namespace YAFF.Data.Repositories
             var sql1 = @"select *
                         from users u
                         where u.id = @id
-                        limit 1;";
+                        limit 1";
             return await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {id});
         }
 

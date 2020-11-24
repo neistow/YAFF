@@ -37,13 +37,13 @@ namespace YAFF.Business.Commands.Auth
             CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
-            if (user.Id == Guid.Empty)
+            if (user == null)
             {
                 return Result<UserAuthenticatedDto>.Failure();
             }
 
             var token = await _unitOfWork.RefreshTokenRepository.FindToken(request.UserId, request.RefreshToken);
-            if (token.Id == Guid.Empty)
+            if (token == null)
             {
                 return Result<UserAuthenticatedDto>.Failure();
             }
