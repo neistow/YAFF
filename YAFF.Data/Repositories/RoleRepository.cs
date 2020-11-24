@@ -18,8 +18,11 @@ namespace YAFF.Data.Repositories
 
         public async Task<IEnumerable<Role>> GetUserRoles(Guid userId)
         {
-            var sql1 = @"select * from get_user_roles(@id)";
-            var roles = await Connection.QueryAsync<Role>(sql1, new {id = userId});
+            var sql1 = @"select r.id, r.name
+                         from userroles ur
+                                  join roles r on ur.roleid = r.id
+                         where ur.userid = @userId";
+            var roles = await Connection.QueryAsync<Role>(sql1, new {userId});
 
             return roles.Where(r => r.Id != Guid.Empty).ToArray();
         }

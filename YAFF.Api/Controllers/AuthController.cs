@@ -12,13 +12,19 @@ using YAFF.Business.Commands.Users;
 
 namespace YAFF.Api.Controllers
 {
-    [Authorize]
     public class AuthController : ApiControllerBase
     {
         public AuthController(IMediator mediator) : base(mediator)
         {
         }
 
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Name");
+            return Ok($"You are authorised as {username!.Value}");
+        }
+        
         [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -67,13 +73,6 @@ namespace YAFF.Api.Controllers
             return !result.Succeeded
                 ? (IActionResult) Unauthorized()
                 : Ok(result.ToApiResponse(200));
-        }
-
-        [HttpGet]
-        public IActionResult Test()
-        {
-            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Name");
-            return Ok($"You are authorised as {username!.Value}");
         }
     }
 }

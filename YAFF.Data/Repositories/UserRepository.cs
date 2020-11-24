@@ -14,10 +14,13 @@ namespace YAFF.Data.Repositories
         public UserRepository(IDbConnection connection) : base(connection)
         {
         }
-        
+
         public async Task<User> GetByIdAsync(Guid id)
         {
-            var sql1 = @"select * from get_user_by_id(@id)";
+            var sql1 = @"select *
+                        from users u
+                        where u.id = @id
+                        limit 1;";
             return await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {id});
         }
 
@@ -37,8 +40,11 @@ namespace YAFF.Data.Repositories
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
-            var sql1 = @"select * from get_user_by_email(@email)";
-            return await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {email});
+            var sql = @"select *
+                         from users u
+                         where u.email = @email
+                         limit 1";
+            return await Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
         }
     }
 }

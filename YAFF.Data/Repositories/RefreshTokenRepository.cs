@@ -14,7 +14,7 @@ namespace YAFF.Data.Repositories
         public RefreshTokenRepository(IDbConnection connection) : base(connection)
         {
         }
-        
+
         public async Task<int> AddAsync(RefreshToken entity)
         {
             var sql = @"insert into refreshtokens (id, token, datecreated, dateexpires, userid)
@@ -37,7 +37,11 @@ namespace YAFF.Data.Repositories
 
         public async Task<RefreshToken> FindToken(Guid userId, string tokenString)
         {
-            var sql = @"select * from find_refresh_token(@id,@token)";
+            var sql = @"select *
+                        from refreshtokens t
+                        where t.userid = @id
+                          and t.token = @token
+                        limit 1;";
             return await Connection.QuerySingleOrDefaultAsync<RefreshToken>(sql,
                 new {id = userId, token = tokenString});
         }
