@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YAFF.Core.Entities
+namespace YAFF.Core.DTO
 {
-    public class Post
+    public class PostListItemDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
@@ -11,11 +11,7 @@ namespace YAFF.Core.Entities
         public DateTime DatePosted { get; set; }
         public DateTime? DateEdited { get; set; }
         public int LikesCount { get; set; }
-        
         public Guid AuthorId { get; set; }
-        public User User { get; set; }
-
-        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
-        public ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
+        public ICollection<string> Tags { get; set; } = new List<string>();
     }
 }

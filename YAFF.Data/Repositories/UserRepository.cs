@@ -17,11 +17,25 @@ namespace YAFF.Data.Repositories
 
         public async Task<User> GetByIdAsync(Guid id)
         {
-            var sql1 = @"select *
+            var sql = @"select *
                         from users u
                         where u.id = @id
-                        limit 1";
-            return await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {id});
+                        limit 1;
+                        
+                        select r.id, r.name
+                            from userroles ur
+                        join roles r on ur.roleid = r.id
+                        where ur.userid = @id";
+            using var reader = await Connection.QueryMultipleAsync(sql, new {id});
+            var user = await reader.ReadSingleOrDefaultAsync<User>();
+            var roles = await reader.ReadAsync<Role>();
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.Roles = roles;
+            return user;
         }
 
         public async Task<int> AddAsync(User entity)

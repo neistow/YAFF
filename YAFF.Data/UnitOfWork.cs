@@ -11,6 +11,8 @@ namespace YAFF.Data
         private IRoleRepository _roleRepository;
         private IRefreshTokenRepository _tokenRepository;
 
+        private IPostRepository _postRepository;
+
         private readonly IDbConnection _connection;
 
         public UnitOfWork(IDbConnectionFactory connectionFactory)
@@ -23,6 +25,8 @@ namespace YAFF.Data
 
         public IRefreshTokenRepository RefreshTokenRepository =>
             _tokenRepository ??= new RefreshTokenRepository(_connection);
+
+        public IPostRepository PostRepository => _postRepository ??= new PostRepository(_connection);
 
         public void Dispose()
         {
