@@ -2,13 +2,13 @@
 {
     public class ApiError
     {
-        public int StatusCode { get; }
+        public int Status { get; }
         public string Field { get; }
         public string Message { get; }
 
-        public ApiError(int statusCode, string field, string message)
+        public ApiError(int status, string field, string message)
         {
-            StatusCode = statusCode;
+            Status = status;
             Field = field;
             Message = message;
         }

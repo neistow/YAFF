@@ -15,6 +15,40 @@ namespace YAFF.Data.Repositories
         {
         }
 
+        public async Task<Post> GetPost(Guid id)
+        {
+            var sql = @"select *,
+                               (select count(*) from postlikes where postid = @id) as LikesCount
+                        from posts p
+                        where p.id = @id
+                        limit 1;
+                        
+                        select *
+                        from postlikes pl
+                        where postid = @id;
+
+                        select t.id, t.name
+                        from posttags pt
+                                 left join tags t on pt.tagid = t.id
+                        where pt.postid = @id;
+                        
+                        select *
+                        from postcomments pc
+                        where pc.postid = @id;";
+            using var reader = await Connection.QueryMultipleAsync(sql, new {id});
+
+            var post = await reader.ReadSingleOrDefaultAsync<Post>();
+            var postLikes = await reader.ReadAsync<PostLike>();
+            var postTags = await reader.ReadAsync<Tag>();
+            var postComments = await reader.ReadAsync<PostComment>();
+
+            post?.PostLikes.AddRange(postLikes);
+            post?.Tags.AddRange(postTags);
+            post?.PostComments.AddRange(postComments);
+
+            return post;
+        }
+
         public async Task<IEnumerable<Post>> GetPosts(int page, int pageSize)
         {
             var sql = @"select p.id,

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YAFF.Core.Entities
+namespace YAFF.Core.DTO
 {
-    public class PostComment
+    public class PostCommentDto
     {
         public Guid Id { get; set; }
         public string Body { get; set; }
@@ -10,12 +10,7 @@ namespace YAFF.Core.Entities
         public DateTime? DateEdited { get; set; }
         
         public Guid PostId { get; set; }
-        public Post Post { get; set; }
-
         public Guid AuthorId { get; set; }
-        public User Author { get; set; }
-
         public Guid? ReplyTo { get; set; }
-        public PostComment Comment { get; set; }
     }
 }

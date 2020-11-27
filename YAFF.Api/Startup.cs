@@ -1,5 +1,6 @@
 using System.Globalization;
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,13 +44,18 @@ namespace YAFF.Api
         {
             services.BuildCors();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(o =>
+                {
+                    o.RegisterValidatorsFromAssembly(typeof(Startup).Assembly);
+                    o.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                });
 
             services.AddJwtBearerAuthentication(Configuration);
 
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
             services.AddMediatR(typeof(Startup).Assembly, typeof(CreateUserCommandHandler).Assembly);
-            
+
             services.AddDbConnectionFactory();
             services.AddUnitOfWork();
         }

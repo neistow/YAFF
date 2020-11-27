@@ -14,8 +14,9 @@ namespace YAFF.Core.Entities
         
         public Guid AuthorId { get; set; }
         public User User { get; set; }
-
-        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
-        public ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
+        
+        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public List<PostLike> PostLikes { get; set; } = new List<PostLike>();
+        public List<PostComment> PostComments { get; set; } = new List<PostComment>();
     }
 }

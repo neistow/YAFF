@@ -6,7 +6,7 @@ create table Photos
 (
     Id          uuid
         primary key,
-    Filename    uuid,
+    Filename    uuid not null,
     ThumbnailId uuid
         constraint photos__thumb__fk
             references Photos
@@ -87,7 +87,7 @@ create table PostComments
         primary key,
     PostId        uuid
         constraint comment__post__fk
-            references Posts,
+            references Posts not null,
     AuthorId      uuid
         constraint comment__author__fk
             references Users,
