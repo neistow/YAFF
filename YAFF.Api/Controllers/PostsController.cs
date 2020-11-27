@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO;
 using YAFF.Api.Extensions;
@@ -14,6 +15,7 @@ namespace YAFF.Api.Controllers
         {
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPosts([FromQuery] PaginationDto request)
         {
@@ -23,6 +25,7 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse(200));
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost([FromRoute] Guid id)
         {

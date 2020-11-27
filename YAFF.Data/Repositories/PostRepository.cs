@@ -49,7 +49,7 @@ namespace YAFF.Data.Repositories
             return post;
         }
 
-        public async Task<IEnumerable<Post>> GetPosts(int page, int pageSize)
+        public async Task<List<Post>> GetPosts(int page, int pageSize)
         {
             var sql = @"select p.id,
                                p.title,
@@ -81,7 +81,7 @@ namespace YAFF.Data.Repositories
 
                 return entry;
             }, splitOn: "TagId", param: new {shift = (page - 1) * pageSize, pageSize});
-            return posts.Values.ToArray();
+            return posts.Values.ToList();
         }
     }
 }

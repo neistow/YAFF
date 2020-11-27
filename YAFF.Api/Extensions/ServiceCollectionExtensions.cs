@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using YAFF.Core.Configs;
 
 
@@ -48,6 +50,26 @@ namespace YAFF.Api.Extensions
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.FromMinutes(1)
                 };
+            });
+        }
+
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Jwt auth bearer scheme",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer"
+                });
+
+                var securityRequirement = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference {Id = "Bearer", Type = ReferenceType.SecurityScheme}
+                };
+                var openApiRequirement = new OpenApiSecurityRequirement {{securityRequirement, new List<string>()}};
+                s.AddSecurityRequirement(openApiRequirement);
             });
         }
     }

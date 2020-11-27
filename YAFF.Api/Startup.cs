@@ -51,6 +51,8 @@ namespace YAFF.Api
                     o.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
 
+            services.ConfigureSwagger();
+
             services.AddJwtBearerAuthentication(Configuration);
 
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
@@ -62,6 +64,13 @@ namespace YAFF.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "Api V1 Docs");
+                c.RoutePrefix = string.Empty;
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

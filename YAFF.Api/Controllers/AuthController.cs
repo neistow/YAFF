@@ -64,7 +64,7 @@ namespace YAFF.Api.Controllers
             {
                 return Unauthorized();
             }
-
+            
             var userId = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
             var result =
                 await Mediator.Send(new RefreshTokenCommand

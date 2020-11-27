@@ -8,6 +8,6 @@ namespace YAFF.Core.Interfaces.Repositories
     public interface IPostRepository
     {
         Task<Post> GetPost(Guid id);
-        Task<IEnumerable<Post>> GetPosts(int page, int pageSize);
+        Task<List<Post>> GetPosts(int page, int pageSize);
     }
 }
