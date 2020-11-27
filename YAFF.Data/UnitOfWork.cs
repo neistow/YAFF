@@ -12,6 +12,7 @@ namespace YAFF.Data
         private IRefreshTokenRepository _tokenRepository;
 
         private IPostRepository _postRepository;
+        private ITagRepository _tagRepository;
 
         private readonly IDbConnection _connection;
 
@@ -27,6 +28,7 @@ namespace YAFF.Data
             _tokenRepository ??= new RefreshTokenRepository(_connection);
 
         public IPostRepository PostRepository => _postRepository ??= new PostRepository(_connection);
+        public ITagRepository TagRepository => _tagRepository ??= new TagRepository(_connection);
 
         public void Dispose()
         {

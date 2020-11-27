@@ -8,7 +8,8 @@ namespace YAFF.Core.Interfaces.Data
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }
         IRefreshTokenRepository RefreshTokenRepository { get; }
-        
+
         IPostRepository PostRepository { get; }
+        ITagRepository TagRepository { get; }
     }
 }

@@ -83,5 +83,14 @@ namespace YAFF.Data.Repositories
             }, splitOn: "TagId", param: new {shift = (page - 1) * pageSize, pageSize});
             return posts.Values.ToList();
         }
+
+        public async Task<int> AddAsync(Post post)
+        {
+            var sql1 = @"insert into posts (Id, title, body, dateposted, authorid)
+                        values (@id,@title,@body,@dateposted,@authorid)";
+
+            return await Connection.ExecuteAsync(sql1,
+                new {post.Id, post.Title, post.Body, post.DatePosted, post.AuthorId});
+        }
     }
 }

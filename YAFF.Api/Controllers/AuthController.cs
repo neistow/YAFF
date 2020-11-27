@@ -24,7 +24,7 @@ namespace YAFF.Api.Controllers
             var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Name");
             return Ok($"You are authorised as {username!.Value}");
         }
-        
+
         [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -64,11 +64,13 @@ namespace YAFF.Api.Controllers
             {
                 return Unauthorized();
             }
-            
-            var userId = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
+
             var result =
                 await Mediator.Send(new RefreshTokenCommand
-                    {UserId = Guid.Parse(userId!.Value), RefreshToken = request.Token});
+                {
+                    UserId = GetCurrentUserId(),
+                    RefreshToken = request.Token
+                });
 
             return !result.Succeeded
                 ? (IActionResult) Unauthorized()

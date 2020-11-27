@@ -42,6 +42,11 @@ namespace YAFF.Business.Commands.Auth
                 return Result<UserAuthenticatedDto>.Failure();
             }
 
+            if (user.IsBanned)
+            {
+                return Result<UserAuthenticatedDto>.Failure(string.Empty, "You are banned.");
+            }
+
             var token = await _unitOfWork.RefreshTokenRepository.FindToken(request.UserId, request.RefreshToken);
             if (token == null)
             {

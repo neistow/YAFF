@@ -9,5 +9,6 @@ namespace YAFF.Core.Interfaces.Repositories
     {
         Task<Post> GetPost(Guid id);
         Task<List<Post>> GetPosts(int page, int pageSize);
+        Task<int> AddAsync(Post post);
     }
 }
