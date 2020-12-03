@@ -68,7 +68,7 @@ namespace YAFF.Api.Controllers
             var result =
                 await Mediator.Send(new RefreshTokenCommand
                 {
-                    UserId = GetCurrentUserId(),
+                    UserId = CurrentUserId,
                     RefreshToken = request.Token
                 });
 

@@ -58,7 +58,7 @@ namespace YAFF.Business.Commands.Auth
 
             if (!PasswordHasher.VerifyPasswordHash(request.Password, user.PasswordHash))
             {
-                return Result<UserAuthenticatedDto>.Failure(request.Password, "Invalid password");
+                return Result<UserAuthenticatedDto>.Failure(nameof(request.Password), "Invalid password");
             }
 
             var userRoles = await _unitOfWork.RoleRepository.GetUserRoles(user.Id);

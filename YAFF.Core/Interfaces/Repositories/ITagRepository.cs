@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using YAFF.Core.Entities;
 
@@ -8,5 +9,8 @@ namespace YAFF.Core.Interfaces.Repositories
     {
         Task<Tag> GetTag(Guid id);
         Task<int> AddPostTag(PostTag postTag);
+        Task<int> RemovePostTag(PostTag postTag);
+
+        Task UpdatePostTags(Guid postId, ICollection<PostTag> postTags);
     }
 }

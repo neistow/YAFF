@@ -39,11 +39,11 @@ namespace YAFF.Data.Repositories
 
             var post = await reader.ReadSingleOrDefaultAsync<Post>();
             var postLikes = await reader.ReadAsync<PostLike>();
-            var postTags = await reader.ReadAsync<Tag>();
+            var tags = await reader.ReadAsync<Tag>();
             var postComments = await reader.ReadAsync<PostComment>();
 
             post?.PostLikes.AddRange(postLikes);
-            post?.Tags.AddRange(postTags);
+            post?.Tags.AddRange(tags);
             post?.PostComments.AddRange(postComments);
 
             return post;
@@ -86,11 +86,22 @@ namespace YAFF.Data.Repositories
 
         public async Task<int> AddAsync(Post post)
         {
-            var sql1 = @"insert into posts (Id, title, body, dateposted, authorid)
+            var sql = @"insert into posts (Id, title, body, dateposted, authorid)
                         values (@id,@title,@body,@dateposted,@authorid)";
 
-            return await Connection.ExecuteAsync(sql1,
+            return await Connection.ExecuteAsync(sql,
                 new {post.Id, post.Title, post.Body, post.DatePosted, post.AuthorId});
+        }
+
+        public async Task<int> UpdateAsync(Post post)
+        {
+            var sql = @"update posts p set 
+                        title = @title,
+                        body = @body,
+                        dateedited = @dateedited
+                        where p.id = @id";
+
+            return await Connection.ExecuteAsync(sql, new {post.Id, post.Title, post.Body, post.DateEdited});
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using YAFF.Core.Entities;
@@ -27,6 +29,38 @@ namespace YAFF.Data.Repositories
             var sql = @"insert into posttags(postid, tagid) 
                         values (@postId,@tagId)";
             return await Connection.ExecuteAsync(sql, new {postId = postTag.PostId, tagId = postTag.TagId});
+        }
+
+        public async Task<int> RemovePostTag(PostTag postTag)
+        {
+            var sql = @"delete 
+                        from posttags pt
+                        where pt.postid = @postid and pt.tagid = @tagid";
+            return await Connection.ExecuteAsync(sql, new {postTag.PostId, postTag.TagId});
+        }
+
+        public async Task UpdatePostTags(Guid postId, ICollection<PostTag> postTags)
+        {
+            var sql = @"select t.id as TagId, t.name
+                        from posttags pt
+                                 left join tags t on pt.tagid = t.id
+                        where pt.postid = @id";
+            var oldTags = (await Connection.QueryAsync<Tag>(sql, new {id = postId})).ToList();
+
+            foreach (var postTag in postTags)
+            {
+                var index = oldTags.FindIndex(t => t.TagId == postTag.TagId);
+                if (index == -1)
+                {
+                    await AddPostTag(postTag);
+                }
+                else
+                {
+                    oldTags.RemoveAt(index);
+                }
+            }
+
+            oldTags.ForEach(async t => await RemovePostTag(new PostTag {PostId = postId, TagId = t.TagId}));
         }
     }
 }

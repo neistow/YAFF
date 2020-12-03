@@ -18,10 +18,13 @@ namespace YAFF.Api.Controllers
             Mediator = mediator;
         }
 
-        protected Guid GetCurrentUserId()
+        protected Guid CurrentUserId
         {
-            var idClaim = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
-            return !Guid.TryParse(idClaim!.Value, out var id) ? Guid.Empty : id;
+            get
+            {
+                var idClaim = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
+                return !Guid.TryParse(idClaim!.Value, out var id) ? Guid.Empty : id;
+            }
         }
     }
 }

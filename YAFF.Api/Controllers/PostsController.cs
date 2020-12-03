@@ -41,19 +41,38 @@ namespace YAFF.Api.Controllers
 
         [EnableTransaction]
         [HttpPost]
-        public async Task<IActionResult> CreatePost([FromBody] PostDto request)
+        public async Task<IActionResult> CreatePost([FromBody] PostDto post)
         {
             var result = await Mediator.Send(new CreatePostRequest
             {
-                Title = request.Title,
-                Body = request.Body,
-                AuthorId = GetCurrentUserId(),
-                Tags = request.Tags
+                Title = post.Title,
+                Body = post.Body,
+                AuthorId = CurrentUserId,
+                Tags = post.Tags
             });
 
             return !result.Succeeded
                 ? (IActionResult) BadRequest(result.ToApiError(400))
                 : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse(201));
+        }
+
+
+        [EnableTransaction]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditPost([FromRoute] Guid id, [FromBody] PostDto post)
+        {
+            var result = await Mediator.Send(new EditPostCommand
+            {
+                PostId = id,
+                Title = post.Title,
+                Body = post.Body,
+                Tags = post.Tags,
+                EditorId = CurrentUserId
+            });
+
+            return !result.Succeeded
+                ? (IActionResult) BadRequest(result.ToApiError(400))
+                : Ok(result.ToApiResponse(200));
         }
     }
 }
