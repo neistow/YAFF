@@ -30,7 +30,7 @@ namespace YAFF.Business.Queries.Posts
 
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
-            var posts = await _unitOfWork.PostRepository.GetPosts(request.Page, request.PageSize);
+            var posts = await _unitOfWork.PostRepository.GetPostsAsync(request.Page, request.PageSize);
             if (!posts.Any())
             {
                 return Result<PostListDto>.Failure(nameof(request.Page),"No records found");

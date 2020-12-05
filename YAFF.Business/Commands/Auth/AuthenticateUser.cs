@@ -61,13 +61,12 @@ namespace YAFF.Business.Commands.Auth
                 return Result<UserAuthenticatedDto>.Failure(nameof(request.Password), "Invalid password");
             }
 
-            var userRoles = await _unitOfWork.RoleRepository.GetUserRoles(user.Id);
             var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand
             {
                 UserId = user.Id,
                 UserName = user.NickName,
                 UserEmail = user.Email,
-                Roles = userRoles.Select(r => r.Name)
+                Roles = user.Roles.Select(r => r.Name)
             });
 
             var tokenString = await _mediator.Send(new GenerateRefreshTokenCommand());
@@ -80,7 +79,7 @@ namespace YAFF.Business.Commands.Auth
                 UserId = user.Id
             };
 
-            await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.RefreshTokenRepository.AddTokenAsync(refreshToken);
 
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
             {

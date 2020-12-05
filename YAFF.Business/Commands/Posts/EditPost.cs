@@ -8,6 +8,7 @@ using MediatR;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
+using YAFF.Core.Extensions;
 using YAFF.Core.Interfaces.Data;
 
 namespace YAFF.Business.Commands.Posts
@@ -46,14 +47,13 @@ namespace YAFF.Business.Commands.Posts
                 return Result<PostDto>.Failure(string.Empty, "You are banned.");
             }
 
-            var post = await _unitOfWork.PostRepository.GetPost(request.PostId);
+            var post = await _unitOfWork.PostRepository.GetPostAsync(request.PostId);
             if (post == null)
             {
                 return Result<PostDto>.Failure(nameof(request.PostId), "Post not found");
             }
 
-            var userRoles = await _unitOfWork.RoleRepository.GetUserRoles(user.Id);
-            if (post.AuthorId != user.Id && userRoles.All(r => r.Name.ToLower() != "admin"))
+            if (post.AuthorId != user.Id && !user.CanManagePosts())
             {
                 return Result<PostDto>.Failure(nameof(request.PostId), "You are not allowed to edit post");
             }
@@ -61,7 +61,7 @@ namespace YAFF.Business.Commands.Posts
             var tags = new List<Tag>();
             foreach (var tagId in request.Tags)
             {
-                var tag = await _unitOfWork.TagRepository.GetTag(tagId);
+                var tag = await _unitOfWork.TagRepository.GetTagAsync(tagId);
                 if (tag == null)
                 {
                     return Result<PostDto>.Failure(nameof(request.Tags), $"Tag with id {tagId} doesnt exist");
@@ -75,10 +75,10 @@ namespace YAFF.Business.Commands.Posts
             post.Tags = tags;
             post.DateEdited = DateTime.UtcNow;
 
-            await _unitOfWork.PostRepository.UpdateAsync(post);
+            await _unitOfWork.PostRepository.UpdatePostAsync(post);
 
             var postTags = tags.Select(t => new PostTag {PostId = post.Id, TagId = t.TagId}).ToList();
-            await _unitOfWork.TagRepository.UpdatePostTags(post.Id, postTags);
+            await _unitOfWork.TagRepository.UpdatePostTagsAsync(post.Id, postTags);
 
             return Result<PostDto>.Success(_mapper.Map<PostDto>(post));
         }

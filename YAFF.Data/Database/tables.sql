@@ -6,10 +6,10 @@ create table Photos
 (
     Id          uuid
         primary key,
-    Filename    uuid not null,
+    Filename    text not null,
     ThumbnailId uuid
         constraint photos__thumb__fk
-            references Photos
+            references Photos on delete set null
 );
 
 
@@ -24,10 +24,10 @@ create table Users
     EmailConfirmed   bool         not null default false,
     IsBanned         bool         not null default false,
     BanLiftDate      timestamp,
-    PasswordHash     text     not null,
+    PasswordHash     text         not null,
     AvatarId         uuid
         constraint users_avatar__fk
-            references Photos
+            references Photos on delete cascade
 );
 
 
@@ -35,12 +35,12 @@ drop table if exists RefreshTokens;
 create table RefreshTokens
 (
     Id          uuid primary key,
-    Token       text  not null,
+    Token       text      not null,
     DateCreated timestamp not null,
     DateExpires timestamp not null,
     UserId      uuid
         constraint user_token__fk
-            references Users on delete no action
+            references Users on delete cascade
 );
 
 
@@ -57,10 +57,10 @@ create table UserRoles
 (
     RoleId uuid
         constraint user_role__role__fk
-            references Roles,
+            references Roles on delete restrict,
     UserId uuid
         constraint user_role__user__fk
-            references Users,
+            references Users on delete cascade,
     constraint user_role__pk
         primary key (RoleId, UserId)
 );
@@ -76,7 +76,7 @@ create table Posts
     DateEdited timestamp,
     AuthorId   uuid
         constraint post__author__fk
-            references Users
+            references Users on delete cascade
 );
 
 
@@ -87,16 +87,16 @@ create table PostComments
         primary key,
     PostId        uuid
         constraint comment__post__fk
-            references Posts not null,
+            references Posts on delete cascade,
     AuthorId      uuid
         constraint comment__author__fk
-            references Users,
+            references Users on delete cascade,
     Body          text      not null,
     DateCommented timestamp not null,
     DateEdited    timestamp,
     ReplyTo       uuid
         constraint comment__reply__fk
-            references PostComments
+            references PostComments on delete set null
 );
 
 
@@ -105,10 +105,10 @@ create table PostLikes
 (
     PostId uuid
         constraint like__post__fk
-            references Posts,
+            references Posts on delete cascade,
     UserId uuid
         constraint like__user__fk
-            references Users,
+            references Users on delete cascade,
     constraint liked__post__pk
         primary key (PostId, UserId)
 );
@@ -126,10 +126,10 @@ create table PostTags
 (
     PostId uuid
         constraint post_tag__post__fk
-            references Posts,
+            references Posts on delete cascade,
     TagId  uuid
         constraint post_tag__tag__fk
-            references Tags,
+            references Tags on delete cascade,
     constraint post_tag__pk
         primary key (PostId, TagId)
 );

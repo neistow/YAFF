@@ -47,7 +47,7 @@ namespace YAFF.Business.Commands.Posts
             var tags = new List<Tag>();
             foreach (var tagId in request.Tags)
             {
-                var tag = await _unitOfWork.TagRepository.GetTag(tagId);
+                var tag = await _unitOfWork.TagRepository.GetTagAsync(tagId);
                 if (tag == null)
                 {
                     return Result<PostDto>.Failure(nameof(request.Tags), $"Tag with id {tagId} doesnt exist");
@@ -65,12 +65,12 @@ namespace YAFF.Business.Commands.Posts
                 DatePosted = DateTime.UtcNow,
                 Tags = tags
             };
-            await _unitOfWork.PostRepository.AddAsync(post);
+            await _unitOfWork.PostRepository.AddPostAsync(post);
 
             var postTags = post.Tags.Select(t => new PostTag {PostId = post.Id, TagId = t.TagId});
             foreach (var postTag in postTags)
             {
-                await _unitOfWork.TagRepository.AddPostTag(postTag);
+                await _unitOfWork.TagRepository.AddPostTagAsync(postTag);
             }
 
             var result = _mapper.Map<PostDto>(post);

@@ -47,7 +47,7 @@ namespace YAFF.Business.Commands.Auth
                 return Result<UserAuthenticatedDto>.Failure(string.Empty, "You are banned.");
             }
 
-            var token = await _unitOfWork.RefreshTokenRepository.FindToken(request.UserId, request.RefreshToken);
+            var token = await _unitOfWork.RefreshTokenRepository.FindTokenAsync(request.UserId, request.RefreshToken);
             if (token == null)
             {
                 return Result<UserAuthenticatedDto>.Failure();
@@ -58,13 +58,12 @@ namespace YAFF.Business.Commands.Auth
                 return Result<UserAuthenticatedDto>.Failure();
             }
 
-            var userRoles = await _unitOfWork.RoleRepository.GetUserRoles(user.Id);
             var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand
             {
                 UserId = user.Id,
                 UserName = user.NickName,
                 UserEmail = user.Email,
-                Roles = userRoles.Select(r => r.Name)
+                Roles = user.Roles.Select(r => r.Name)
             });
 
             var tokenString = await _mediator.Send(new GenerateRefreshTokenCommand());
@@ -77,8 +76,8 @@ namespace YAFF.Business.Commands.Auth
                 UserId = user.Id
             };
 
-            await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
-            await _unitOfWork.RefreshTokenRepository.DeleteAsync(token.Id);
+            await _unitOfWork.RefreshTokenRepository.AddTokenAsync(refreshToken);
+            await _unitOfWork.RefreshTokenRepository.DeleteTokenAsync(token.Id);
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
                 {JwtToken = jwtToken, RefreshToken = refreshToken.Token});
         }

@@ -6,8 +6,8 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public interface IRefreshTokenRepository
     {
-        Task<int> AddAsync(RefreshToken entity);
-        Task<int> DeleteAsync(Guid id);
-        Task<RefreshToken> FindToken(Guid userId, string tokenString);
+        Task<int> AddTokenAsync(RefreshToken entity);
+        Task<int> DeleteTokenAsync(Guid id);
+        Task<RefreshToken> FindTokenAsync(Guid userId, string tokenString);
     }
 }

@@ -28,7 +28,7 @@ namespace YAFF.Business.Queries.Posts
 
         public async Task<Result<PostDto>> Handle(GetPostQuery request, CancellationToken cancellationToken)
         {
-            var post = await _unitOfWork.PostRepository.GetPost(request.Id);
+            var post = await _unitOfWork.PostRepository.GetPostAsync(request.Id);
             if (post == null)
             {
                 return Result<PostDto>.Failure(nameof(request.Id), "Post doesnt exist");

@@ -7,10 +7,9 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public interface ITagRepository
     {
-        Task<Tag> GetTag(Guid id);
-        Task<int> AddPostTag(PostTag postTag);
-        Task<int> RemovePostTag(PostTag postTag);
-
-        Task UpdatePostTags(Guid postId, ICollection<PostTag> postTags);
+        Task<Tag> GetTagAsync(Guid id);
+        Task<int> AddPostTagAsync(PostTag postTag);
+        Task<int> DeletePostTagAsync(PostTag postTag);
+        Task UpdatePostTagsAsync(Guid postId, IEnumerable<PostTag> postTags);
     }
 }

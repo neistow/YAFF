@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -73,6 +72,20 @@ namespace YAFF.Api.Controllers
             return !result.Succeeded
                 ? (IActionResult) BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePost([FromRoute] Guid id)
+        {
+            var result = await Mediator.Send(new DeletePostCommand
+            {
+                PostId = id,
+                UserId = CurrentUserId
+            });
+
+            return !result.Succeeded
+                ? (IActionResult) BadRequest(result.ToApiError(400))
+                : Ok();
         }
     }
 }

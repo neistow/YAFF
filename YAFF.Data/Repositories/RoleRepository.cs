@@ -16,7 +16,7 @@ namespace YAFF.Data.Repositories
         {
         }
 
-        public async Task<IEnumerable<Role>> GetUserRoles(Guid userId)
+        public async Task<IEnumerable<Role>> GetUserRolesAsync(Guid userId)
         {
             var sql1 = @"select r.id, r.name
                          from userroles ur

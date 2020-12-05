@@ -29,16 +29,12 @@ namespace YAFF.Data.Repositories
             using var reader = await Connection.QueryMultipleAsync(sql, new {id});
             var user = await reader.ReadSingleOrDefaultAsync<User>();
             var roles = await reader.ReadAsync<Role>();
-            if (user == null)
-            {
-                return null;
-            }
 
-            user.Roles = roles;
+            user?.Roles.AddRange(roles);
             return user;
         }
 
-        public async Task<int> AddAsync(User entity)
+        public async Task<int> AddUserAsync(User entity)
         {
             var sql = @"insert into users (id, nickname, registrationdate, email, passwordhash)
                         values (@id, @nickname, @registrationdate, @email, @passwordhash);";

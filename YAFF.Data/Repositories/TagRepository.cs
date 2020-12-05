@@ -15,7 +15,7 @@ namespace YAFF.Data.Repositories
         {
         }
 
-        public async Task<Tag> GetTag(Guid id)
+        public async Task<Tag> GetTagAsync(Guid id)
         {
             var sql = @"select t.id as TagId, t.name
                         from tags t 
@@ -24,14 +24,14 @@ namespace YAFF.Data.Repositories
             return await Connection.QuerySingleOrDefaultAsync<Tag>(sql, new {id});
         }
 
-        public async Task<int> AddPostTag(PostTag postTag)
+        public async Task<int> AddPostTagAsync(PostTag postTag)
         {
             var sql = @"insert into posttags(postid, tagid) 
                         values (@postId,@tagId)";
             return await Connection.ExecuteAsync(sql, new {postId = postTag.PostId, tagId = postTag.TagId});
         }
 
-        public async Task<int> RemovePostTag(PostTag postTag)
+        public async Task<int> DeletePostTagAsync(PostTag postTag)
         {
             var sql = @"delete 
                         from posttags pt
@@ -39,7 +39,7 @@ namespace YAFF.Data.Repositories
             return await Connection.ExecuteAsync(sql, new {postTag.PostId, postTag.TagId});
         }
 
-        public async Task UpdatePostTags(Guid postId, ICollection<PostTag> postTags)
+        public async Task UpdatePostTagsAsync(Guid postId, IEnumerable<PostTag> postTags)
         {
             var sql = @"select t.id as TagId, t.name
                         from posttags pt
@@ -52,7 +52,7 @@ namespace YAFF.Data.Repositories
                 var index = oldTags.FindIndex(t => t.TagId == postTag.TagId);
                 if (index == -1)
                 {
-                    await AddPostTag(postTag);
+                    await AddPostTagAsync(postTag);
                 }
                 else
                 {
@@ -60,7 +60,7 @@ namespace YAFF.Data.Repositories
                 }
             }
 
-            oldTags.ForEach(async t => await RemovePostTag(new PostTag {PostId = postId, TagId = t.TagId}));
+            oldTags.ForEach(async t => await DeletePostTagAsync(new PostTag {PostId = postId, TagId = t.TagId}));
         }
     }
 }

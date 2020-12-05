@@ -8,6 +8,6 @@ namespace YAFF.Core.Interfaces.Repositories
     {
         Task<User> GetByIdAsync(Guid id);
         Task<User> GetUserByEmailAsync(string email);
-        Task<int> AddAsync(User entity);
+        Task<int> AddUserAsync(User entity);
     }
 }

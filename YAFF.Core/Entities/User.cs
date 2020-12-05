@@ -17,10 +17,10 @@ namespace YAFF.Core.Entities
         public Guid? AvatarId { get; set; }
         public Photo Avatar { get; set; }
 
-        public IEnumerable<Role> Roles { get; set; }
-        public IEnumerable<Post> Posts { get; set; }
-        public IEnumerable<PostComment> PostComments { get; set; }
-        public IEnumerable<PostLike> LikedPosts { get; set; }
-        public IEnumerable<RefreshToken> RefreshTokens { get; set; }
+        public List<Role> Roles { get; set; } = new List<Role>();
+        public IEnumerable<Post> Posts { get; set; } = new List<Post>();
+        public IEnumerable<PostComment> PostComments { get; set; } = new List<PostComment>();
+        public IEnumerable<PostLike> LikedPosts { get; set; } = new List<PostLike>();
+        public IEnumerable<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

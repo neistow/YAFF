@@ -47,7 +47,7 @@ namespace YAFF.Business.Commands.Users
                 RegistrationDate = DateTime.UtcNow
             };
             
-            await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.UserRepository.AddUserAsync(user);
 
             // TODO: send register verification email
 

@@ -15,7 +15,7 @@ namespace YAFF.Data.Repositories
         {
         }
 
-        public async Task<Post> GetPost(Guid id)
+        public async Task<Post> GetPostAsync(Guid id)
         {
             var sql = @"select *,
                                (select count(*) from postlikes where postid = @id) as LikesCount
@@ -49,7 +49,7 @@ namespace YAFF.Data.Repositories
             return post;
         }
 
-        public async Task<List<Post>> GetPosts(int page, int pageSize)
+        public async Task<List<Post>> GetPostsAsync(int page, int pageSize)
         {
             var sql = @"select p.id,
                                p.title,
@@ -84,7 +84,7 @@ namespace YAFF.Data.Repositories
             return posts.Values.ToList();
         }
 
-        public async Task<int> AddAsync(Post post)
+        public async Task<int> AddPostAsync(Post post)
         {
             var sql = @"insert into posts (Id, title, body, dateposted, authorid)
                         values (@id,@title,@body,@dateposted,@authorid)";
@@ -93,7 +93,7 @@ namespace YAFF.Data.Repositories
                 new {post.Id, post.Title, post.Body, post.DatePosted, post.AuthorId});
         }
 
-        public async Task<int> UpdateAsync(Post post)
+        public async Task<int> UpdatePostAsync(Post post)
         {
             var sql = @"update posts p set 
                         title = @title,
@@ -102,6 +102,14 @@ namespace YAFF.Data.Repositories
                         where p.id = @id";
 
             return await Connection.ExecuteAsync(sql, new {post.Id, post.Title, post.Body, post.DateEdited});
+        }
+
+        public async Task<int> DeletePostAsync(Guid id)
+        {
+            var sql = @"delete 
+                        from posts p 
+                        where p.id = @id";
+            return await Connection.ExecuteAsync(sql, new {id});
         }
     }
 }

@@ -7,9 +7,10 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public interface IPostRepository
     {
-        Task<Post> GetPost(Guid id);
-        Task<List<Post>> GetPosts(int page, int pageSize);
-        Task<int> AddAsync(Post post);
-        Task<int> UpdateAsync(Post post);
+        Task<Post> GetPostAsync(Guid id);
+        Task<List<Post>> GetPostsAsync(int page, int pageSize);
+        Task<int> AddPostAsync(Post post);
+        Task<int> UpdatePostAsync(Post post);
+        Task<int> DeletePostAsync(Guid id);
     }
 }

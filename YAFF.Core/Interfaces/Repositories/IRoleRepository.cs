@@ -7,6 +7,6 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public interface IRoleRepository
     {
-        Task<IEnumerable<Role>> GetUserRoles(Guid userId);
+        Task<IEnumerable<Role>> GetUserRolesAsync(Guid userId);
     }
 }
