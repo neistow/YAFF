@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO;
 using YAFF.Api.Extensions;
 using YAFF.Api.Helpers;
+using YAFF.Business.Commands.Likes;
 using YAFF.Business.Commands.Posts;
+using YAFF.Business.Queries.Comments;
 using YAFF.Business.Queries.Posts;
 
 namespace YAFF.Api.Controllers
@@ -37,7 +39,22 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse(200));
         }
 
+        [AllowAnonymous]
+        [HttpGet("{postId}/comments")]
+        public async Task<IActionResult> Comments([FromRoute] Guid postId, [FromQuery] PaginationDto request)
+        {
+            var result = await Mediator.Send(new GetCommentsOfPostRequest
+            {
+                PostId = postId,
+                Page = request.Page,
+                PageSize = request.PageSize
+            });
 
+            return !result.Succeeded
+                ? (IActionResult) BadRequest(result.ToApiError(400))
+                : Ok(result.ToApiResponse(200));
+        }
+        
         [EnableTransaction]
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] PostDto post)
@@ -86,6 +103,32 @@ namespace YAFF.Api.Controllers
             return !result.Succeeded
                 ? (IActionResult) BadRequest(result.ToApiError(400))
                 : Ok();
+        }
+
+        [HttpPost("{postId}/addLike")]
+        public async Task<IActionResult> AddLikeToPost([FromRoute] Guid postId)
+        {
+            var result = await Mediator.Send(new AddLikeToPostRequest
+            {
+                PostId = postId,
+                UserId = CurrentUserId
+            });
+            return !result.Succeeded
+                ? (IActionResult) BadRequest(result.ToApiError(400))
+                : Ok(result.ToApiResponse(200));
+        }
+
+        [HttpPost("{postId}/removeLike")]
+        public async Task<IActionResult> RemoveLikeFromPost([FromRoute] Guid postId)
+        {
+            var result = await Mediator.Send(new RemoveLikeFromPostRequest
+            {
+                PostId = postId,
+                UserId = CurrentUserId
+            });
+            return !result.Succeeded
+                ? (IActionResult) BadRequest(result.ToApiError(400))
+                : Ok(result.ToApiResponse(200));
         }
     }
 }

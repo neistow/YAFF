@@ -13,6 +13,8 @@ namespace YAFF.Data
 
         private IPostRepository _postRepository;
         private ITagRepository _tagRepository;
+        private ICommentRepository _commentRepository;
+        private ILikeRepository _likeRepository;
 
         private readonly IDbConnection _connection;
 
@@ -29,6 +31,8 @@ namespace YAFF.Data
 
         public IPostRepository PostRepository => _postRepository ??= new PostRepository(_connection);
         public ITagRepository TagRepository => _tagRepository ??= new TagRepository(_connection);
+        public ICommentRepository CommentRepository => _commentRepository ??= new CommentRepository(_connection);
+        public ILikeRepository LikeRepository => _likeRepository ??= new LikeRepository(_connection);
 
         public void Dispose()
         {

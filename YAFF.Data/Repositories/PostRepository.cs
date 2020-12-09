@@ -30,21 +30,15 @@ namespace YAFF.Data.Repositories
                         select t.id, t.name
                         from posttags pt
                                  left join tags t on pt.tagid = t.id
-                        where pt.postid = @id;
-                        
-                        select *
-                        from postcomments pc
-                        where pc.postid = @id;";
+                        where pt.postid = @id;";
             using var reader = await Connection.QueryMultipleAsync(sql, new {id});
 
             var post = await reader.ReadSingleOrDefaultAsync<Post>();
             var postLikes = await reader.ReadAsync<PostLike>();
             var tags = await reader.ReadAsync<Tag>();
-            var postComments = await reader.ReadAsync<PostComment>();
 
             post?.PostLikes.AddRange(postLikes);
             post?.Tags.AddRange(tags);
-            post?.PostComments.AddRange(postComments);
 
             return post;
         }

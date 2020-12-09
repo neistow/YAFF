@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
 using YAFF.Core.Entities;
-using YAFF.Core.Interfaces.Data;
 using YAFF.Core.Interfaces.Repositories;
 
 namespace YAFF.Data.Repositories
@@ -34,6 +32,15 @@ namespace YAFF.Data.Repositories
             return user;
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var sql = @"select *
+                         from users u
+                         where u.email = @email
+                         limit 1";
+            return await Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
+        }
+
         public async Task<int> AddUserAsync(User entity)
         {
             var sql = @"insert into users (id, nickname, registrationdate, email, passwordhash)
@@ -46,15 +53,6 @@ namespace YAFF.Data.Repositories
                 entity.Email,
                 entity.PasswordHash
             });
-        }
-
-        public async Task<User> GetUserByEmailAsync(string email)
-        {
-            var sql = @"select *
-                         from users u
-                         where u.email = @email
-                         limit 1";
-            return await Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
         }
     }
 }

@@ -47,7 +47,7 @@ namespace YAFF.Business.Commands.Posts
 
             await _unitOfWork.PostRepository.DeletePostAsync(post.Id);
 
-            return Result<object>.Success(new object());
+            return Result<object>.Success();
         }
     }
 }

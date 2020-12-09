@@ -20,7 +20,7 @@
         }
 
 
-        public static Result<T> Success(T data)
+        public static Result<T> Success(T data = default)
         {
             return new Result<T>(data, true, string.Empty, string.Empty);
         }

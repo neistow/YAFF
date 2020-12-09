@@ -11,5 +11,7 @@ namespace YAFF.Core.Interfaces.Data
 
         IPostRepository PostRepository { get; }
         ITagRepository TagRepository { get; }
+        ICommentRepository CommentRepository { get; }
+        ILikeRepository LikeRepository { get; }
     }
 }

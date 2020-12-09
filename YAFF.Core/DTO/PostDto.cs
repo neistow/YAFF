@@ -17,6 +17,5 @@ namespace YAFF.Core.DTO
 
         public IEnumerable<string> Tags { get; set; } = new List<string>();
         public IEnumerable<Guid> PostLikes { get; set; } = new List<Guid>();
-        public IEnumerable<PostCommentDto> PostComments { get; set; } = new List<PostCommentDto>();
     }
 }

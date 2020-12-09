@@ -5,7 +5,6 @@ using AutoMapper;
 using MediatR;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Entities;
 using YAFF.Core.Interfaces.Data;
 
 namespace YAFF.Business.Queries.Posts
