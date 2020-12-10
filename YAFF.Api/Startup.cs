@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using System.IO;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
-using YAFF.Business;
 using YAFF.Business.Commands.Users;
 using YAFF.Core.Mapper;
 using YAFF.Data.Extensions;
@@ -22,8 +19,8 @@ namespace YAFF.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; set; }
-        public IWebHostEnvironment HostEnvironment { get; set; }
+        public IConfiguration Configuration { get; }
+        public IWebHostEnvironment HostEnvironment { get; }
 
         public Startup(IWebHostEnvironment environment)
         {
