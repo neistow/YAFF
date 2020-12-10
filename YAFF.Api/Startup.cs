@@ -1,4 +1,6 @@
+using System;
 using System.Globalization;
+using System.IO;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
 using YAFF.Business;
@@ -65,7 +68,7 @@ namespace YAFF.Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.ConfigureLoggingMiddleware();
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -77,6 +80,12 @@ namespace YAFF.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(env.WebRootPath),
+                RequestPath = "/files"
+            });
 
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
