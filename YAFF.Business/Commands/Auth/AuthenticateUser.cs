@@ -10,7 +10,6 @@ using YAFF.Core.Configs;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
 using YAFF.Core.Interfaces.Data;
-using YAFF.Core.Interfaces.Repositories;
 
 namespace YAFF.Business.Commands.Auth
 {

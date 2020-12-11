@@ -32,20 +32,20 @@ namespace YAFF.Data.Repositories
             return user;
         }
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public Task<User> GetUserByEmailAsync(string email)
         {
             var sql = @"select *
                          from users u
                          where u.email = @email
                          limit 1";
-            return await Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
+            return Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
         }
 
-        public async Task<int> AddUserAsync(User entity)
+        public Task<int> AddUserAsync(User entity)
         {
             var sql = @"insert into users (id, nickname, registrationdate, email, passwordhash)
                         values (@id, @nickname, @registrationdate, @email, @passwordhash);";
-            return await Connection.ExecuteAsync(sql, new
+            return Connection.ExecuteAsync(sql, new
             {
                 entity.Id,
                 entity.NickName,

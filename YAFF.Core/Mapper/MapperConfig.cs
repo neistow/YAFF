@@ -20,7 +20,8 @@ namespace YAFF.Core.Mapper
                 .ForMember(p => p.Tags, o => o.MapFrom(p => p.Tags.Select(t => t.Name)))
                 .ForMember(p => p.PostLikes, o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
 
-            CreateMap<PostComment, PostCommentDto>();
+            CreateMap<PostComment, PostCommentDto>()
+                .ForMember(pc => pc.AuthorAvatar, o => o.MapFrom(pc => $"files/pictures/{pc.Author.Avatar.FileName}"));
         }
     }
 }

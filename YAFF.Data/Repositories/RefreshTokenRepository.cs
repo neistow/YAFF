@@ -15,11 +15,11 @@ namespace YAFF.Data.Repositories
         {
         }
 
-        public async Task<int> AddTokenAsync(RefreshToken entity)
+        public Task<int> AddTokenAsync(RefreshToken entity)
         {
             var sql = @"insert into refreshtokens (id, token, datecreated, dateexpires, userid)
                         values (@id, @token, @datecreated, @dateexpires, @userid)";
-            return await Connection.ExecuteAsync(sql, new
+            return Connection.ExecuteAsync(sql, new
             {
                 entity.UserId,
                 entity.Id,
@@ -29,20 +29,20 @@ namespace YAFF.Data.Repositories
             });
         }
 
-        public async Task<int> DeleteTokenAsync(Guid id)
+        public Task<int> DeleteTokenAsync(Guid id)
         {
             var sql = @"delete from refreshtokens t where t.id = @id";
-            return await Connection.ExecuteAsync(sql, new {id});
+            return Connection.ExecuteAsync(sql, new {id});
         }
 
-        public async Task<RefreshToken> FindTokenAsync(Guid userId, string tokenString)
+        public Task<RefreshToken> FindTokenAsync(Guid userId, string tokenString)
         {
             var sql = @"select *
                         from refreshtokens t
                         where t.userid = @id
                           and t.token = @token
                         limit 1;";
-            return await Connection.QuerySingleOrDefaultAsync<RefreshToken>(sql,
+            return Connection.QuerySingleOrDefaultAsync<RefreshToken>(sql,
                 new {id = userId, token = tokenString});
         }
     }

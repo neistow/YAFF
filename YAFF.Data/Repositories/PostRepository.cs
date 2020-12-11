@@ -78,16 +78,16 @@ namespace YAFF.Data.Repositories
             return posts.Values.ToList();
         }
 
-        public async Task<int> AddPostAsync(Post post)
+        public Task<int> AddPostAsync(Post post)
         {
             var sql = @"insert into posts (Id, title, body, dateposted, authorid)
                         values (@id,@title,@body,@dateposted,@authorid)";
 
-            return await Connection.ExecuteAsync(sql,
+            return Connection.ExecuteAsync(sql,
                 new {post.Id, post.Title, post.Body, post.DatePosted, post.AuthorId});
         }
 
-        public async Task<int> UpdatePostAsync(Post post)
+        public Task<int> UpdatePostAsync(Post post)
         {
             var sql = @"update posts p set 
                         title = @title,
@@ -95,15 +95,15 @@ namespace YAFF.Data.Repositories
                         dateedited = @dateedited
                         where p.id = @id";
 
-            return await Connection.ExecuteAsync(sql, new {post.Id, post.Title, post.Body, post.DateEdited});
+            return Connection.ExecuteAsync(sql, new {post.Id, post.Title, post.Body, post.DateEdited});
         }
 
-        public async Task<int> DeletePostAsync(Guid id)
+        public Task<int> DeletePostAsync(Guid id)
         {
             var sql = @"delete 
                         from posts p 
                         where p.id = @id";
-            return await Connection.ExecuteAsync(sql, new {id});
+            return Connection.ExecuteAsync(sql, new {id});
         }
     }
 }

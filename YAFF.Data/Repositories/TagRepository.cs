@@ -15,28 +15,28 @@ namespace YAFF.Data.Repositories
         {
         }
 
-        public async Task<Tag> GetTagAsync(Guid id)
+        public Task<Tag> GetTagAsync(Guid id)
         {
             var sql = @"select t.id as TagId, t.name
                         from tags t 
                         where t.id = @id
                         limit 1";
-            return await Connection.QuerySingleOrDefaultAsync<Tag>(sql, new {id});
+            return Connection.QuerySingleOrDefaultAsync<Tag>(sql, new {id});
         }
 
-        public async Task<int> AddPostTagAsync(PostTag postTag)
+        public Task<int> AddPostTagAsync(PostTag postTag)
         {
             var sql = @"insert into posttags(postid, tagid) 
                         values (@postId,@tagId)";
-            return await Connection.ExecuteAsync(sql, new {postId = postTag.PostId, tagId = postTag.TagId});
+            return Connection.ExecuteAsync(sql, new {postId = postTag.PostId, tagId = postTag.TagId});
         }
 
-        public async Task<int> DeletePostTagAsync(PostTag postTag)
+        public Task<int> DeletePostTagAsync(PostTag postTag)
         {
             var sql = @"delete 
                         from posttags pt
                         where pt.postid = @postid and pt.tagid = @tagid";
-            return await Connection.ExecuteAsync(sql, new {postTag.PostId, postTag.TagId});
+            return Connection.ExecuteAsync(sql, new {postTag.PostId, postTag.TagId});
         }
 
         public async Task UpdatePostTagsAsync(Guid postId, IEnumerable<PostTag> postTags)
