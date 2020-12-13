@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using YAFF.Api.DTO;
+using YAFF.Api.DTO.Auth;
 
-namespace YAFF.Api.Validators
+namespace YAFF.Api.Validators.Auth
 {
     public class RefreshTokenValidator : AbstractValidator<RefreshTokenDto>
     {

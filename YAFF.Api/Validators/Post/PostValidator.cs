@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using YAFF.Api.DTO;
+using YAFF.Api.DTO.Post;
 
-namespace YAFF.Api.Validators
+namespace YAFF.Api.Validators.Post
 {
     public class PostValidator : AbstractValidator<PostDto>
     {

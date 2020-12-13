@@ -1,4 +1,4 @@
-﻿namespace YAFF.Api.DTO
+﻿namespace YAFF.Api.DTO.Auth
 {
     public class RegisterDto
     {

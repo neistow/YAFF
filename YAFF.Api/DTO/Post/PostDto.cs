@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YAFF.Api.DTO
+namespace YAFF.Api.DTO.Post
 {
     public class PostDto
     {

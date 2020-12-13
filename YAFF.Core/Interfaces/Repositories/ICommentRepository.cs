@@ -10,5 +10,7 @@ namespace YAFF.Core.Interfaces.Repositories
         Task<PostComment> GetCommentAsync(Guid id);
         Task<IEnumerable<PostComment>> GetCommentsOfPostAsync(Guid postId, int page, int pageSize);
         Task<int> AddCommentAsync(PostComment comment);
+        Task<int> UpdateCommentAsync(PostComment comment);
+        Task<int> DeleteCommentAsync(Guid id);
     }
 }

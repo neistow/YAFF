@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO;
+using YAFF.Api.DTO.Auth;
 using YAFF.Api.Extensions;
 using YAFF.Api.Helpers;
 using YAFF.Business.Commands.Auth;

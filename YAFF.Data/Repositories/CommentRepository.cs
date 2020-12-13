@@ -53,7 +53,7 @@ namespace YAFF.Data.Repositories
         public Task<int> AddCommentAsync(PostComment comment)
         {
             var sql = @"insert into postcomments (id, postid, authorid, body, datecommented, dateedited, replyto)
-                        values (@id,@postid,@authorid,@body,@datecommented,@dateedited,@replyto)";
+                        values (@id, @postid, @authorid, @body, @datecommented, @replyto)";
             return Connection.ExecuteAsync(sql, new
             {
                 comment.Id,
@@ -61,9 +61,24 @@ namespace YAFF.Data.Repositories
                 comment.AuthorId,
                 comment.Body,
                 comment.DateCommented,
-                comment.DateEdited,
                 comment.ReplyTo
             });
+        }
+
+        public Task<int> UpdateCommentAsync(PostComment comment)
+        {
+            var sql = @"update postcomments pc
+                        set body = @body, dateedited = @dateedited
+                        where pc.id = @id";
+            return Connection.ExecuteAsync(sql, new {comment.Body, comment.DateEdited, comment.Id});
+        }
+
+        public Task<int> DeleteCommentAsync(Guid id)
+        {
+            var sql = @"delete from
+                        postcomments pc
+                        where pc.id = @id";
+            return Connection.ExecuteAsync(sql, new {id});
         }
     }
 }
