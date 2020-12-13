@@ -59,6 +59,7 @@ namespace YAFF.Business.Commands.Comments
 
             var comment = new PostComment
             {
+                Id = Guid.NewGuid(),
                 Body = request.Body,
                 PostId = post.Id,
                 Author = user,
