@@ -15,20 +15,35 @@ namespace YAFF.Data.Repositories
 
         public async Task<User> GetByIdAsync(Guid id)
         {
-            var sql = @"select *
+            var sql = @"drop table if exists ""user"";
+                        create temp table ""user"" as
+                        select *
                         from users u
                         where u.id = @id
                         limit 1;
-                        
+
+                        select *
+                        from ""user"";
+
                         select r.id, r.name
-                            from userroles ur
-                        join roles r on ur.roleid = r.id
-                        where ur.userid = @id";
+                        from userroles ur
+                                 join roles r on ur.roleid = r.id
+                        where ur.userid = @id;
+
+                        select *
+                        from photos p
+                        where p.id = (select u.id from ""user"" u);
+                        drop table if exists ""user""";
             using var reader = await Connection.QueryMultipleAsync(sql, new {id});
             var user = await reader.ReadSingleOrDefaultAsync<User>();
             var roles = await reader.ReadAsync<Role>();
+            var avatar = await reader.ReadSingleOrDefaultAsync<Photo>();
 
             user?.Roles.AddRange(roles);
+            if (user != null)
+            {
+                user.Avatar = avatar;
+            }
             return user;
         }
 

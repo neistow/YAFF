@@ -7,6 +7,8 @@ namespace YAFF.Core.Interfaces.Repositories
 {
     public interface ICommentRepository
     {
+        Task<PostComment> GetCommentAsync(Guid id);
         Task<IEnumerable<PostComment>> GetCommentsOfPostAsync(Guid postId, int page, int pageSize);
+        Task<int> AddCommentAsync(PostComment comment);
     }
 }

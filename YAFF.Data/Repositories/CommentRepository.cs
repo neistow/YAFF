@@ -14,6 +14,14 @@ namespace YAFF.Data.Repositories
         {
         }
 
+        public Task<PostComment> GetCommentAsync(Guid id)
+        {
+            var sql = @"select * 
+                        from postcomments pc
+                        where pc.id = @id";
+            return Connection.QuerySingleOrDefaultAsync<PostComment>(sql, new {id});
+        }
+
         public Task<IEnumerable<PostComment>> GetCommentsOfPostAsync(Guid postId, int page, int pageSize)
         {
             var sql = @"select pc.id,
@@ -40,6 +48,22 @@ namespace YAFF.Data.Repositories
                     return comment;
                 },
                 param: new {postId, shift = (page - 1) * pageSize, pageSize});
+        }
+
+        public Task<int> AddCommentAsync(PostComment comment)
+        {
+            var sql = @"insert into postcomments (id, postid, authorid, body, datecommented, dateedited, replyto)
+                        values (@id,@postid,@authorid,@body,@datecommented,@dateedited,@replyto)";
+            return Connection.ExecuteAsync(sql, new
+            {
+                comment.Id,
+                comment.PostId,
+                comment.AuthorId,
+                comment.Body,
+                comment.DateCommented,
+                comment.DateEdited,
+                comment.ReplyTo
+            });
         }
     }
 }
