@@ -2,10 +2,10 @@
 
 namespace YAFF.Api.DTO.Comment
 {
-    public class CreateCommentDto
+    public record CreateCommentDto
     {
-        public Guid PostId { get; set; }
-        public string Body { get; set; }
-        public Guid? ReplyTo { get; set; }
+        public Guid PostId { get; init; }
+        public string Body { get; init; }
+        public Guid? ReplyTo { get; init; }
     }
 }

@@ -44,8 +44,9 @@ namespace YAFF.Data.Repositories
             return Connection.QueryAsync<PostComment, Photo, PostComment>(sql,
                 (comment, commenterAvatar) =>
                 {
-                    comment.Author = new User {Id = comment.AuthorId, Avatar = commenterAvatar};
-                    return comment;
+                    var commentWithAuthor =
+                        comment with{Author = new User {Id = comment.AuthorId, Avatar = commenterAvatar}};
+                    return commentWithAuthor;
                 },
                 param: new {postId, shift = (page - 1) * pageSize, pageSize});
         }

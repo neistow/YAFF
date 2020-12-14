@@ -2,9 +2,9 @@
 
 namespace YAFF.Api.DTO.Comment
 {
-    public class UpdateCommentDto
+    public record UpdateCommentDto
     {
-        public Guid Id { get; set; }
-        public string Body { get; set; }
+        public Guid Id { get; init; }
+        public string Body { get; init; }
     }
 }

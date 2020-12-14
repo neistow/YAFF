@@ -70,17 +70,15 @@ namespace YAFF.Business.Commands.Posts
                 tags.Add(tag);
             }
 
-            post.Title = request.Title;
-            post.Body = request.Body;
-            post.Tags = tags;
-            post.DateEdited = DateTime.UtcNow;
+            var updatedPost = post with{Title = request.Title, Body = request.Body, Tags = tags, DateEdited =
+                DateTime.UtcNow};
 
-            await _unitOfWork.PostRepository.UpdatePostAsync(post);
+            await _unitOfWork.PostRepository.UpdatePostAsync(updatedPost);
 
             var postTags = tags.Select(t => new PostTag {PostId = post.Id, TagId = t.TagId}).ToList();
-            await _unitOfWork.TagRepository.UpdatePostTagsAsync(post.Id, postTags);
+            await _unitOfWork.TagRepository.UpdatePostTagsAsync(updatedPost.Id, postTags);
 
-            return Result<PostDto>.Success(_mapper.Map<PostDto>(post));
+            return Result<PostDto>.Success(_mapper.Map<PostDto>(updatedPost));
         }
     }
 }

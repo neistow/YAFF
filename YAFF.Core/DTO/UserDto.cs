@@ -2,15 +2,15 @@
 
 namespace YAFF.Core.DTO
 {
-    public class UserInfo
+    public record UserInfo
     {
-        public Guid Id { get; set; }
-        public string NickName { get; set; }
-        public DateTime RegistrationDate { get; set; }
-        public string Email { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public bool IsBanned { get; set; }
-        public DateTime? BanLiftDate { get; set; }
-        public string Avatar { get; set; }
+        public Guid Id { get; init; }
+        public string NickName { get; init; }
+        public DateTime RegistrationDate { get; init; }
+        public string Email { get; init; }
+        public bool EmailConfirmed { get; init; }
+        public bool IsBanned { get; init; }
+        public DateTime? BanLiftDate { get; init; }
+        public string Avatar { get; init; }
     }
 }

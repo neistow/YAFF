@@ -2,12 +2,12 @@
 
 namespace YAFF.Core.Entities
 {
-    public class PostLike
+    public record PostLike
     {
-        public Guid PostId { get; set; }
-        public Post Post { get; set; }
+        public Guid PostId { get; init; }
+        public Post Post { get; init; }
 
-        public Guid UserId { get; set; }
-        public User User { get; set; }
+        public Guid UserId { get; init; }
+        public User User { get; init; }
     }
 }

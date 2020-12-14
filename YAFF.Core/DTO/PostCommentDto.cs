@@ -2,17 +2,16 @@
 
 namespace YAFF.Core.DTO
 {
-    public class PostCommentDto
+    public record PostCommentDto
     {
-        public Guid Id { get; set; }
-        public string Body { get; set; }
-        public DateTime DateCommented { get; set; }
-        public DateTime? DateEdited { get; set; }
+        public Guid Id { get; init; }
+        public string Body { get; init; }
+        public DateTime DateCommented { get; init; }
+        public DateTime? DateEdited { get; init; }
 
-        public Guid AuthorId { get; set; }
-        public string AuthorAvatar { get; set; }
-        
-        public Guid PostId { get; set; }
-        public Guid? ReplyTo { get; set; }
+        public Guid AuthorId { get; init; }
+        public string AuthorAvatar { get; init; }
+        public Guid PostId { get; init; }
+        public Guid? ReplyTo { get; init; }
     }
 }

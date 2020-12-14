@@ -1,8 +1,8 @@
 ﻿namespace YAFF.Core.DTO
 {
-    public class UserAuthenticatedDto
+    public record UserAuthenticatedDto
     {
-        public string JwtToken { get; set; }
-        public string RefreshToken { get; set; }
+        public string JwtToken { get; init; }
+        public string RefreshToken { get; init; }
     }
 }

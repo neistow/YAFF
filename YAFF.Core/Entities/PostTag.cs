@@ -2,12 +2,12 @@
 
 namespace YAFF.Core.Entities
 {
-    public class PostTag
+    public record PostTag
     {
-        public Guid TagId { get; set; }
-        public Tag Tag { get; set; }
+        public Guid TagId { get; init; }
+        public Tag Tag { get; init; }
         
-        public Guid PostId { get; set; }
-        public Post Post { get; set; }
+        public Guid PostId { get; init; }
+        public Post Post { get; init; }
     }
 }

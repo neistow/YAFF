@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace YAFF.Api.DTO.Post
 {
-    public class PostDto
+    public record PostDto
     {
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public IEnumerable<Guid> Tags { get; set; }
+        public string Title { get; init; }
+        public string Body { get; init; }
+        public IEnumerable<Guid> Tags { get; init; }
     }
 }

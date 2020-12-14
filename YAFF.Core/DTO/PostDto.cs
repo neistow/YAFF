@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace YAFF.Core.DTO
 {
-    public class PostDto
+    public record PostDto
     {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public DateTime DatePosted { get; set; }
-        public DateTime? DateEdited { get; set; }
+        public Guid Id { get; init; }
+        public string Title { get; init; }
+        public string Body { get; init; }
+        public DateTime DatePosted { get; init; }
+        public DateTime? DateEdited { get; init; }
         public int LikesCount => PostLikes.Count();
 
-        public Guid AuthorId { get; set; }
+        public Guid AuthorId { get; init; }
 
-        public IEnumerable<string> Tags { get; set; } = new List<string>();
-        public IEnumerable<Guid> PostLikes { get; set; } = new List<Guid>();
+        public IEnumerable<string> Tags { get; init; } = new List<string>();
+        public IEnumerable<Guid> PostLikes { get; init; } = new List<Guid>();
     }
 }

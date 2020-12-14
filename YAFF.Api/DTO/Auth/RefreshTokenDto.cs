@@ -1,7 +1,7 @@
 ﻿namespace YAFF.Api.DTO.Auth
 {
-    public class RefreshTokenDto
+    public record RefreshTokenDto
     {
-        public string Token { get; set; }
+        public string Token { get; init; }
     }
 }

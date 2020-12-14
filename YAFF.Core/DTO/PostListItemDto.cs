@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace YAFF.Core.DTO
 {
-    public class PostListItemDto
+    public record PostListItemDto
     {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public DateTime DatePosted { get; set; }
-        public DateTime? DateEdited { get; set; }
-        public int LikesCount { get; set; }
-        public Guid AuthorId { get; set; }
-        public IEnumerable<string> Tags { get; set; } = new List<string>();
+        public Guid Id { get; init; }
+        public string Title { get; init; }
+        public string Body { get; init; }
+        public DateTime DatePosted { get; init; }
+        public DateTime? DateEdited { get; init; }
+        public int LikesCount { get; init; }
+        public Guid AuthorId { get; init; }
+        public IEnumerable<string> Tags { get; init; } = new List<string>();
     }
 }

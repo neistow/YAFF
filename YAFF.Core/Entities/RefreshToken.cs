@@ -2,14 +2,14 @@
 
 namespace YAFF.Core.Entities
 {
-    public class RefreshToken
+    public record RefreshToken
     {
-        public Guid Id { get; set; }
-        public string Token { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateExpires { get; set; }
+        public Guid Id { get; init; }
+        public string Token { get; init; }
+        public DateTime DateCreated { get; init; }
+        public DateTime DateExpires { get; init; }
 
-        public Guid UserId { get; set; }
-        public User User { get; set; }
+        public Guid UserId { get; init; }
+        public User User { get; init; }
     }
 }

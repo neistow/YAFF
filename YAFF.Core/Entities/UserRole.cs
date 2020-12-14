@@ -2,12 +2,12 @@
 
 namespace YAFF.Core.Entities
 {
-    public class UserRole
+    public record UserRole
     {
-        public Guid RoleId { get; set; }
-        public Role Role { get; set; }
+        public Guid RoleId { get; init; }
+        public Role Role { get; init; }
 
-        public Guid UserId { get; set; }
-        public User User { get; set; }
+        public Guid UserId { get; init; }
+        public User User { get; init; }
     }
 }

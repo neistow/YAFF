@@ -2,9 +2,9 @@
 
 namespace YAFF.Core.Entities
 {
-    public class Role
+    public record Role
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public Guid Id { get; init; }
+        public string Name { get; init; }
     }
 }

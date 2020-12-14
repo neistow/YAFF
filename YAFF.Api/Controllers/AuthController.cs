@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YAFF.Api.DTO;
 using YAFF.Api.DTO.Auth;
 using YAFF.Api.Extensions;
 using YAFF.Api.Helpers;
@@ -27,6 +25,7 @@ namespace YAFF.Api.Controllers
         }
 
         [AllowAnonymous]
+        [EnableTransaction]
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -38,11 +37,12 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
 
         [AllowAnonymous]
+        [EnableTransaction]
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -53,7 +53,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
 
@@ -74,7 +74,7 @@ namespace YAFF.Api.Controllers
                 });
 
             return !result.Succeeded
-                ? (IActionResult) Unauthorized()
+                ? Unauthorized()
                 : Ok(result.ToApiResponse(200));
         }
     }

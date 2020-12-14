@@ -2,10 +2,10 @@
 
 namespace YAFF.Core.DTO
 {
-    public class PostListDto
+    public record PostListDto
     {
-        public IEnumerable<PostListItemDto> Posts { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public IEnumerable<PostListItemDto> Posts { get; init; }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
     }
 }

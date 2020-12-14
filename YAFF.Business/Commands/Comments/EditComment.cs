@@ -53,13 +53,11 @@ namespace YAFF.Business.Commands.Comments
                 return Result<PostCommentDto>.Failure();
             }
 
-            comment.Author = user;
-            comment.Body = request.Body;
-            comment.DateEdited = DateTime.UtcNow;
+            var updatedComment = comment with{Author = user, Body = request.Body, DateEdited = DateTime.UtcNow};
 
-            await _unitOfWork.CommentRepository.UpdateCommentAsync(comment);
+            await _unitOfWork.CommentRepository.UpdateCommentAsync(updatedComment);
 
-            var result = _mapper.Map<PostCommentDto>(comment);
+            var result = _mapper.Map<PostCommentDto>(updatedComment);
             return Result<PostCommentDto>.Success(result);
         }
     }

@@ -26,7 +26,7 @@ namespace YAFF.Api.Controllers
         {
             var result = await Mediator.Send(new GetPostsQuery {Page = request.Page, PageSize = request.PageSize});
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
 
@@ -36,7 +36,7 @@ namespace YAFF.Api.Controllers
         {
             var result = await Mediator.Send(new GetPostQuery {Id = id});
             return !result.Succeeded
-                ? (IActionResult) NotFound(result.ToApiError(404))
+                ? NotFound(result.ToApiError(404))
                 : Ok(result.ToApiResponse(200));
         }
 
@@ -52,10 +52,10 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
-        
+
         [EnableTransaction]
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] PostDto post)
@@ -69,7 +69,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse(201));
         }
 
@@ -88,10 +88,11 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
 
+        [EnableTransaction]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost([FromRoute] Guid id)
         {
@@ -102,10 +103,11 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok();
         }
 
+        [EnableTransaction]
         [HttpPost("{postId}/addLike")]
         public async Task<IActionResult> AddLikeToPost([FromRoute] Guid postId)
         {
@@ -115,10 +117,11 @@ namespace YAFF.Api.Controllers
                 UserId = CurrentUserId
             });
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
 
+        [EnableTransaction]
         [HttpPost("{postId}/removeLike")]
         public async Task<IActionResult> RemoveLikeFromPost([FromRoute] Guid postId)
         {
@@ -128,7 +131,7 @@ namespace YAFF.Api.Controllers
                 UserId = CurrentUserId
             });
             return !result.Succeeded
-                ? (IActionResult) BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError(400))
                 : Ok(result.ToApiResponse(200));
         }
     }

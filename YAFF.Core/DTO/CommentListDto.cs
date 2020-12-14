@@ -2,10 +2,10 @@
 
 namespace YAFF.Core.DTO
 {
-    public class CommentListDto
+    public record CommentListDto
     {
-        public IEnumerable<PostCommentDto> Comments { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public IEnumerable<PostCommentDto> Comments { get; init; }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
     }
 }
