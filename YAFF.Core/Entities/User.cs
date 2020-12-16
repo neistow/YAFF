@@ -17,7 +17,7 @@ namespace YAFF.Core.Entities
         public Guid? AvatarId { get; init; }
         public Photo Avatar { get; init; }
 
-        public List<Role> Roles { get; init; } = new();
+        public IEnumerable<Role> Roles { get; init; } = new List<Role>();
         public IEnumerable<Post> Posts { get; init; } = new List<Post>();
         public IEnumerable<PostComment> PostComments { get; init; } = new List<PostComment>();
         public IEnumerable<PostLike> LikedPosts { get; init; } = new List<PostLike>();

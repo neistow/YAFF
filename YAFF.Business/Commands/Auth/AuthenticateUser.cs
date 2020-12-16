@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Options;
 using YAFF.Business.Common;
@@ -23,13 +24,15 @@ namespace YAFF.Business.Commands.Auth
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
         private readonly JwtTokenConfig _jwtTokenConfig;
 
         public AuthenticateUserCommandHandler(IUnitOfWork unitOfWork, IMediator mediator,
-            IOptions<JwtTokenConfig> options)
+            IOptions<JwtTokenConfig> options, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mediator = mediator;
+            _mapper = mapper;
             _jwtTokenConfig = options.Value;
         }
 
@@ -82,6 +85,7 @@ namespace YAFF.Business.Commands.Auth
 
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
             {
+                User = _mapper.Map<UserInfo>(user),
                 JwtToken = jwtToken,
                 RefreshToken = refreshToken.Token
             });

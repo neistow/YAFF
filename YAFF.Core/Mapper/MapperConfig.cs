@@ -9,7 +9,8 @@ namespace YAFF.Core.Mapper
     {
         public MapperConfig()
         {
-            CreateMap<User, UserInfo>();
+            CreateMap<User, UserInfo>()
+                .ForMember(ui => ui.Avatar, o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
 
             CreateMap<Tag, TagDto>()
                 .ForMember(t => t.Id, o => o.MapFrom(t => t.TagId));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using YAFF.Core.Entities;
@@ -15,31 +16,63 @@ namespace YAFF.Data.Repositories
 
         public async Task<User> GetByIdAsync(Guid id)
         {
-            var sql = @"select *
+            var sql1 = @"select *
                         from users u
                         where u.id = @id
-                        limit 1;
+                        limit 1";
+            var sql2 = @"select r.id, r.name
+                         from userroles ur
+                                  join roles r on ur.roleid = r.id
+                         where ur.userid = @userId;
+                         
+                         select p.id, p.filename, p.thumbnailid
+                         from users u
+                                  join photos p on u.avatarid = p.id
+                         where u.id = @userId
+                         limit 1;";
 
-                        select r.id, r.name
-                        from userroles ur
-                                 join roles r on ur.roleid = r.id
-                        where ur.userid = @id";
-            using var reader = await Connection.QueryMultipleAsync(sql, new {id});
-            var user = await reader.ReadSingleOrDefaultAsync<User>();
+            var user = await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {id});
+            if (user == null)
+            {
+                return null;
+            }
+
+            using var reader = await Connection.QueryMultipleAsync(sql2, new {userId = user.Id});
             var roles = await reader.ReadAsync<Role>();
+            var avatar = await reader.ReadSingleOrDefaultAsync<Photo>();
 
-            user.Roles.AddRange(roles);
-
-            return user;
+            return user with {Roles = roles.ToList(), Avatar = avatar};
         }
 
-        public Task<User> GetUserByEmailAsync(string email)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
-            var sql = @"select *
+            var sql1 = @"select *
                          from users u
                          where u.email = @email
                          limit 1";
-            return Connection.QuerySingleOrDefaultAsync<User>(sql, new {email});
+
+            var sql2 = @"select r.id, r.name
+                         from userroles ur
+                                  join roles r on ur.roleid = r.id
+                         where ur.userid = @userId;
+                         
+                         select p.id, p.filename, p.thumbnailid
+                         from users u
+                                  join photos p on u.avatarid = p.id
+                         where u.id = @userId
+                         limit 1;";
+
+            var user = await Connection.QuerySingleOrDefaultAsync<User>(sql1, new {email});
+            if (user == null)
+            {
+                return null;
+            }
+
+            using var reader = await Connection.QueryMultipleAsync(sql2, new {userId = user?.Id});
+            var roles = await reader.ReadAsync<Role>();
+            var avatar = await reader.ReadSingleOrDefaultAsync<Photo>();
+
+            return user with {Roles = roles.ToList(), Avatar = avatar};
         }
 
         public Task<int> AddUserAsync(User entity)

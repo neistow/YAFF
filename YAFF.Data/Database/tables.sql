@@ -27,7 +27,7 @@ create table Users
     PasswordHash     text         not null,
     AvatarId         uuid
         constraint users_avatar__fk
-            references Photos on delete cascade
+            references Photos on delete set null
 );
 
 
