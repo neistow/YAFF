@@ -12,14 +12,14 @@ using YAFF.Core.Interfaces.Repositories;
 
 namespace YAFF.Business.Commands.Users
 {
-    public class CreateUserCommand : IRequest<Result<UserInfo>>
+    public class CreateUserCommand : IRequest<Result<UserDto>>
     {
         public string NickName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }
 
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserInfo>>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -30,12 +30,12 @@ namespace YAFF.Business.Commands.Users
             _mapper = mapper;
         }
 
-        public async Task<Result<UserInfo>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var userInDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
             if (userInDb != null)
             {
-                return Result<UserInfo>.Failure(nameof(request.Email), "User with such email already exists");
+                return Result<UserDto>.Failure(nameof(request.Email), "User with such email already exists");
             }
 
             var user = new User
@@ -51,7 +51,7 @@ namespace YAFF.Business.Commands.Users
 
             // TODO: send register verification email
 
-            return Result<UserInfo>.Success(_mapper.Map<UserInfo>(user));
+            return Result<UserDto>.Success(_mapper.Map<UserDto>(user));
         }
     }
 }

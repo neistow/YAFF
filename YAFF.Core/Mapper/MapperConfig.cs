@@ -9,20 +9,22 @@ namespace YAFF.Core.Mapper
     {
         public MapperConfig()
         {
-            CreateMap<User, UserInfo>()
+            CreateMap<User, UserDto>()
+                .ForMember(ui => ui.Avatar, o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
+            CreateMap<User, AuthorDto>()
                 .ForMember(ui => ui.Avatar, o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
 
             CreateMap<Tag, TagDto>()
                 .ForMember(t => t.Id, o => o.MapFrom(t => t.TagId));
             CreateMap<Post, PostListItemDto>()
-                .ForMember(p => p.Tags, o => o.MapFrom(p => p.Tags.Select(t => t.Name)));
+                .ForMember(p => p.Author, o => o.MapFrom(p => p.User));
 
             CreateMap<Post, PostDto>()
+                .ForMember(p => p.Author, o => o.MapFrom(p => p.User))
                 .ForMember(p => p.Tags, o => o.MapFrom(p => p.Tags.Select(t => t.Name)))
                 .ForMember(p => p.PostLikes, o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
 
-            CreateMap<PostComment, PostCommentDto>()
-                .ForMember(pc => pc.AuthorAvatar, o => o.MapFrom(pc => $"files/pictures/{pc.Author.Avatar.FileName}"));
+            CreateMap<PostComment, PostCommentDto>();
         }
     }
 }

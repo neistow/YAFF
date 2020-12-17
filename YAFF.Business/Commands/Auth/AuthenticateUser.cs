@@ -85,7 +85,7 @@ namespace YAFF.Business.Commands.Auth
 
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
             {
-                User = _mapper.Map<UserInfo>(user),
+                User = _mapper.Map<UserDto>(user),
                 JwtToken = jwtToken,
                 RefreshToken = refreshToken.Token
             });

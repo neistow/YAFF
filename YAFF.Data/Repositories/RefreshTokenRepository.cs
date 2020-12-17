@@ -17,9 +17,9 @@ namespace YAFF.Data.Repositories
 
         public Task<int> AddTokenAsync(RefreshToken entity)
         {
-            var sql = @"insert into refreshtokens (id, token, datecreated, dateexpires, userid)
-                        values (@id, @token, @datecreated, @dateexpires, @userid)";
-            return Connection.ExecuteAsync(sql, new
+            var addToken = @"insert into refreshtokens (id, token, datecreated, dateexpires, userid)
+                             values (@id, @token, @datecreated, @dateexpires, @userid)";
+            return Connection.ExecuteAsync(addToken, new
             {
                 entity.UserId,
                 entity.Id,
@@ -31,18 +31,18 @@ namespace YAFF.Data.Repositories
 
         public Task<int> DeleteTokenAsync(Guid id)
         {
-            var sql = @"delete from refreshtokens t where t.id = @id";
-            return Connection.ExecuteAsync(sql, new {id});
+            var removeToken = @"delete from refreshtokens t where t.id = @id";
+            return Connection.ExecuteAsync(removeToken, new {id});
         }
 
         public Task<RefreshToken> FindTokenAsync(Guid userId, string tokenString)
         {
-            var sql = @"select *
-                        from refreshtokens t
-                        where t.userid = @id
-                          and t.token = @token
-                        limit 1;";
-            return Connection.QuerySingleOrDefaultAsync<RefreshToken>(sql,
+            var findToken = @"select *
+                              from refreshtokens t
+                              where t.userid = @id
+                                and t.token = @token
+                              limit 1;";
+            return Connection.QuerySingleOrDefaultAsync<RefreshToken>(findToken,
                 new {id = userId, token = tokenString});
         }
     }

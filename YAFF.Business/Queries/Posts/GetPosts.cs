@@ -31,12 +31,19 @@ namespace YAFF.Business.Queries.Posts
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
             var posts = await _unitOfWork.PostRepository.GetPostsAsync(request.Page, request.PageSize);
-            if (!posts.Any())
-            {
-                return Result<PostListDto>.Failure(nameof(request.Page),"No records found");
-            }
             
-            var postDtos = _mapper.Map<IEnumerable<PostListItemDto>>(posts);
+            var shortenedPosts = posts.Select(post =>
+            {
+                var bodySummary = post.Body.Split().Take(40);
+                return post with {Body = $"{string.Join(' ', bodySummary)}..."};
+            });
+
+            if (!shortenedPosts.Any())
+            {
+                return Result<PostListDto>.Failure(nameof(request.Page), "No records found");
+            }
+
+            var postDtos = _mapper.Map<IEnumerable<PostListItemDto>>(shortenedPosts);
             return Result<PostListDto>.Success(new PostListDto
             {
                 Posts = postDtos,

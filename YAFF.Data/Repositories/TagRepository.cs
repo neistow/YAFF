@@ -17,36 +17,36 @@ namespace YAFF.Data.Repositories
 
         public Task<Tag> GetTagAsync(Guid id)
         {
-            var sql = @"select t.id as TagId, t.name
-                        from tags t 
-                        where t.id = @id
-                        limit 1";
-            return Connection.QuerySingleOrDefaultAsync<Tag>(sql, new {id});
+            var getTag = @"select t.id as TagId, t.name
+                           from tags t 
+                           where t.id = @id
+                           limit 1";
+            return Connection.QuerySingleOrDefaultAsync<Tag>(getTag, new {id});
         }
 
         public Task<int> AddPostTagAsync(PostTag postTag)
         {
-            var sql = @"insert into posttags(postid, tagid) 
-                        values (@postId,@tagId)";
-            return Connection.ExecuteAsync(sql, new {postId = postTag.PostId, tagId = postTag.TagId});
+            var addTag = @"insert into posttags(postid, tagid) 
+                           values (@postId,@tagId)";
+            return Connection.ExecuteAsync(addTag, new {postId = postTag.PostId, tagId = postTag.TagId});
         }
 
         public Task<int> DeletePostTagAsync(PostTag postTag)
         {
-            var sql = @"delete 
-                        from posttags pt
-                        where pt.postid = @postid and pt.tagid = @tagid";
-            return Connection.ExecuteAsync(sql, new {postTag.PostId, postTag.TagId});
+            var deleteTag = @"delete 
+                              from posttags pt
+                              where pt.postid = @postid and pt.tagid = @tagid";
+            return Connection.ExecuteAsync(deleteTag, new {postTag.PostId, postTag.TagId});
         }
 
         public async Task UpdatePostTagsAsync(Guid postId, IEnumerable<PostTag> postTags)
         {
-            var sql = @"select t.id as TagId, t.name
-                        from posttags pt
-                                 left join tags t on pt.tagid = t.id
-                        where pt.postid = @id";
-            var oldTags = (await Connection.QueryAsync<Tag>(sql, new {id = postId})).ToList();
+            var updateTags = @"select t.id as TagId, t.name
+                               from posttags pt
+                                        left join tags t on pt.tagid = t.id
+                               where pt.postid = @id";
 
+            var oldTags = (await Connection.QueryAsync<Tag>(updateTags, new {id = postId})).ToList();
             foreach (var postTag in postTags)
             {
                 var index = oldTags.FindIndex(t => t.TagId == postTag.TagId);

@@ -9,8 +9,8 @@ namespace YAFF.Core.DTO
         public DateTime DateCommented { get; init; }
         public DateTime? DateEdited { get; init; }
 
-        public Guid AuthorId { get; init; }
-        public string AuthorAvatar { get; init; }
+        public AuthorDto Author { get; init; }
+
         public Guid PostId { get; init; }
         public Guid? ReplyTo { get; init; }
     }

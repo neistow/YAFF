@@ -14,16 +14,16 @@ namespace YAFF.Data.Repositories
 
         public Task<int> AddLikeAsync(Guid postId, Guid userId)
         {
-            var sql = @"insert into postlikes (postid, userid)
-                        values (@postId,@userId)";
-            return Connection.ExecuteAsync(sql, new {postId, userId});
+            var addLike = @"insert into postlikes (postid, userid)
+                            values (@postId,@userId)";
+            return Connection.ExecuteAsync(addLike, new {postId, userId});
         }
 
         public Task<int> RemoveLikeAsync(Guid postId, Guid userId)
         {
-            var sql = @"delete from postlikes
-                        where postid = @postId and userid = @userid";
-            return Connection.ExecuteAsync(sql, new {postId, userId});
+            var removeLike = @"delete from postlikes
+                               where postid = @postId and userid = @userid";
+            return Connection.ExecuteAsync(removeLike, new {postId, userId});
         }
     }
 }

@@ -11,7 +11,6 @@ namespace YAFF.Core.DTO
         public DateTime DatePosted { get; init; }
         public DateTime? DateEdited { get; init; }
         public int LikesCount { get; init; }
-        public Guid AuthorId { get; init; }
-        public IEnumerable<string> Tags { get; init; } = new List<string>();
+        public AuthorDto Author { get; init; }
     }
 }

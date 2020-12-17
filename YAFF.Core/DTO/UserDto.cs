@@ -2,7 +2,7 @@
 
 namespace YAFF.Core.DTO
 {
-    public record UserInfo
+    public record UserDto
     {
         public Guid Id { get; init; }
         public string NickName { get; init; }
