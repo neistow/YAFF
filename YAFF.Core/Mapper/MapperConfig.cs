@@ -17,10 +17,10 @@ namespace YAFF.Core.Mapper
             CreateMap<Tag, TagDto>()
                 .ForMember(t => t.Id, o => o.MapFrom(t => t.TagId));
             CreateMap<Post, PostListItemDto>()
-                .ForMember(p => p.Author, o => o.MapFrom(p => p.User));
+                .ForMember(p => p.Author, o => o.MapFrom(p => p.Author));
 
             CreateMap<Post, PostDto>()
-                .ForMember(p => p.Author, o => o.MapFrom(p => p.User))
+                .ForMember(p => p.Author, o => o.MapFrom(p => p.Author))
                 .ForMember(p => p.Tags, o => o.MapFrom(p => p.Tags.Select(t => t.Name)))
                 .ForMember(p => p.PostLikes, o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
 

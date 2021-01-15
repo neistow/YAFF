@@ -12,5 +12,6 @@ namespace YAFF.Core.Interfaces.Repositories
         Task<int> AddPostAsync(Post post);
         Task<int> UpdatePostAsync(Post post);
         Task<int> DeletePostAsync(Guid id);
+        Task<int> GetPostsCount();
     }
 }

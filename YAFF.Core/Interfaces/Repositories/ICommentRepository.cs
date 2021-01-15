@@ -12,5 +12,6 @@ namespace YAFF.Core.Interfaces.Repositories
         Task<int> AddCommentAsync(PostComment comment);
         Task<int> UpdateCommentAsync(PostComment comment);
         Task<int> DeleteCommentAsync(Guid id);
+        Task<int> GetCommentsCountForPost(Guid postId);
     }
 }

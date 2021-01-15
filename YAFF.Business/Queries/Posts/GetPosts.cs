@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using AutoMapper;
 using MediatR;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Entities;
 using YAFF.Core.Interfaces.Data;
 
 namespace YAFF.Business.Queries.Posts
@@ -31,7 +31,8 @@ namespace YAFF.Business.Queries.Posts
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
             var posts = await _unitOfWork.PostRepository.GetPostsAsync(request.Page, request.PageSize);
-            
+            var allPostsCount = await _unitOfWork.PostRepository.GetPostsCount();
+
             var shortenedPosts = posts.Select(post =>
             {
                 var bodySummary = post.Body.Split().Take(40);
@@ -48,7 +49,8 @@ namespace YAFF.Business.Queries.Posts
             {
                 Posts = postDtos,
                 Page = request.Page,
-                PageSize = request.PageSize
+                PageSize = request.PageSize,
+                TotalPages = (int) Math.Ceiling(allPostsCount / (double) request.PageSize)
             });
         }
     }

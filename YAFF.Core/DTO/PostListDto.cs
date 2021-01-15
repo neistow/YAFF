@@ -7,5 +7,6 @@ namespace YAFF.Core.DTO
         public IEnumerable<PostListItemDto> Posts { get; init; }
         public int Page { get; init; }
         public int PageSize { get; init; }
+        public int TotalPages { get; init; }
     }
 }

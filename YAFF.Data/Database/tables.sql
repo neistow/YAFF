@@ -72,7 +72,7 @@ create table Posts
         primary key,
     Title      varchar(255) not null,
     Body       text         not null,
-    DatePosted timestamp    not null,
+    DateAdded timestamp    not null,
     DateEdited timestamp,
     AuthorId   uuid
         constraint post__author__fk
@@ -92,7 +92,7 @@ create table PostComments
         constraint comment__author__fk
             references Users on delete cascade,
     Body          text      not null,
-    DateCommented timestamp not null,
+    DateAdded timestamp not null,
     DateEdited    timestamp,
     ReplyTo       uuid
         constraint comment__reply__fk

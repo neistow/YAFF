@@ -44,6 +44,8 @@ namespace YAFF.Business.Queries.Comments
 
             var comments =
                 await _unitOfWork.CommentRepository.GetCommentsOfPostAsync(post.Id, request.Page, request.PageSize);
+            var commentsCount = await _unitOfWork.CommentRepository.GetCommentsCountForPost(post.Id);
+
             if (!comments.Any())
             {
                 return Result<CommentListDto>.Failure(nameof(request.Page), "No comments found");
@@ -54,7 +56,8 @@ namespace YAFF.Business.Queries.Comments
             {
                 Comments = result,
                 Page = request.Page,
-                PageSize = request.PageSize
+                PageSize = request.PageSize,
+                TotalPages = (int) Math.Ceiling(commentsCount / (double) request.PageSize)
             });
         }
     }

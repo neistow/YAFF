@@ -20,7 +20,7 @@ namespace YAFF.Data.Repositories
             var getPostWithUserQuery = @"select p.id,
                                                 p.title,
                                                 p.body,
-                                                p.dateposted,
+                                                p.dateadded,
                                                 p.dateedited,
                                                 p.authorid,
                                                 (select count(*) from postlikes where postid = @postId) as LikesCount,
@@ -44,7 +44,7 @@ namespace YAFF.Data.Repositories
                                         where pt.postid = @id;";
 
             var post = (await Connection.QueryAsync<Post, User, Photo, Post>(getPostWithUserQuery,
-                (p, u, a) => p with {User = u with {Avatar = a}},
+                (p, u, a) => p with {Author = u with {Avatar = a}},
                 new {postId = id})).FirstOrDefault();
             if (post == null)
             {
@@ -63,7 +63,7 @@ namespace YAFF.Data.Repositories
             var getPostsWithTags = @"select p.id,
                                             p.title,
                                             p.body,
-                                            p.dateposted,
+                                            p.dateadded,
                                             p.dateedited,
                                             p.authorid,
                                             (select count(*) from postlikes where postid = p.id) as LikesCount,
@@ -75,20 +75,20 @@ namespace YAFF.Data.Repositories
                                      from (select * from posts offset @shift limit @pageSize) p
                                               left join users u on p.authorid = u.id 
                                               left join photos ph on ph.id = u.avatarid
-                                     order by p.dateposted";
+                                     order by p.dateadded desc";
 
             return Connection.QueryAsync<Post, User, Photo, Post>(getPostsWithTags,
-                (post, user, photo) => post with {User = user with {Avatar = photo}},
+                (post, user, photo) => post with {Author = user with {Avatar = photo}},
                 new {shift = (page - 1) * pageSize, pageSize});
         }
 
         public Task<int> AddPostAsync(Post post)
         {
-            var addPost = @"insert into posts (Id, title, body, dateposted, authorid)
-                            values (@id,@title,@body,@dateposted,@authorid)";
+            var addPost = @"insert into posts (Id, title, body, dateadded, authorid)
+                            values (@id,@title,@body,@dateadded,@authorid)";
 
             return Connection.ExecuteAsync(addPost,
-                new {post.Id, post.Title, post.Body, post.DatePosted, post.AuthorId});
+                new {post.Id, post.Title, post.Body, DatePosted = post.DateAdded, post.AuthorId});
         }
 
         public Task<int> UpdatePostAsync(Post post)
@@ -108,6 +108,13 @@ namespace YAFF.Data.Repositories
                                from posts p 
                                where p.id = @id";
             return Connection.ExecuteAsync(deletePost, new {id});
+        }
+
+        public Task<int> GetPostsCount()
+        {
+            var postsCount = @"select count(*)
+                               from posts";
+            return Connection.QuerySingleAsync<int>(postsCount);
         }
     }
 }

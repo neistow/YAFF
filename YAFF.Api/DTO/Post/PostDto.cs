@@ -7,6 +7,6 @@ namespace YAFF.Api.DTO.Post
     {
         public string Title { get; init; }
         public string Body { get; init; }
-        public IEnumerable<Guid> Tags { get; init; }
+        public List<Guid> Tags { get; init; }
     }
 }

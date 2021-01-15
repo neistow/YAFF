@@ -6,7 +6,7 @@ namespace YAFF.Core.DTO
     {
         public Guid Id { get; init; }
         public string Body { get; init; }
-        public DateTime DateCommented { get; init; }
+        public DateTime DateAdded { get; init; }
         public DateTime? DateEdited { get; init; }
 
         public AuthorDto Author { get; init; }

@@ -28,9 +28,11 @@ namespace YAFF.Data.Repositories
                                        pc.postid,
                                        pc.authorid,
                                        pc.body,
-                                       pc.datecommented,
+                                       pc.dateadded,
                                        pc.dateedited,
                                        pc.replyto,
+                                       u.id,
+                                       u.nickname,
                                        p.id,
                                        p.filename,
                                        p.thumbnailid
@@ -38,26 +40,26 @@ namespace YAFF.Data.Repositories
                                          left join users u on pc.authorid = u.id
                                          left join photos p on u.avatarid = p.id
                                 where pc.postid = @postid
-                                order by pc.datecommented
+                                order by pc.dateadded
                                 offset @shift limit @pageSize";
 
-            return Connection.QueryAsync<PostComment, Photo, PostComment>(getComments,
-                (comment, commenterAvatar) =>
-                    comment with{Author = new User {Id = comment.AuthorId, Avatar = commenterAvatar}},
+            return Connection.QueryAsync<PostComment, User, Photo, PostComment>(getComments,
+                (comment, author, authorAvatar) =>
+                    comment with{Author = author with {Avatar = authorAvatar}},
                 new {postId, shift = (page - 1) * pageSize, pageSize});
         }
 
         public Task<int> AddCommentAsync(PostComment comment)
         {
-            var addComment = @"insert into postcomments (id, postid, authorid, body, datecommented, dateedited, replyto)
-                               values (@id, @postid, @authorid, @body, @datecommented, @replyto)";
+            var addComment = @"insert into postcomments (id, postid, authorid, body, dateadded, dateedited, replyto)
+                               values (@id, @postid, @authorid, @body, @dateadded, @replyto)";
             return Connection.ExecuteAsync(addComment, new
             {
                 comment.Id,
                 comment.PostId,
                 comment.AuthorId,
                 comment.Body,
-                comment.DateCommented,
+                DateCommented = comment.DateAdded,
                 comment.ReplyTo
             });
         }
@@ -76,6 +78,14 @@ namespace YAFF.Data.Repositories
                                   postcomments pc
                                   where pc.id = @id";
             return Connection.ExecuteAsync(deleteComment, new {id});
+        }
+
+        public Task<int> GetCommentsCountForPost(Guid postId)
+        {
+            var commentsCount = @"select count(*)
+                                 from postcomments pc
+                                 where pc.postid = @postId";
+            return Connection.QuerySingleAsync<int>(commentsCount, new {postId});
         }
     }
 }

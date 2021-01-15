@@ -9,7 +9,7 @@ namespace YAFF.Core.DTO
         public Guid Id { get; init; }
         public string Title { get; init; }
         public string Body { get; init; }
-        public DateTime DatePosted { get; init; }
+        public DateTime DateAdded { get; init; }
         public DateTime? DateEdited { get; init; }
         public int LikesCount => PostLikes.Count();
 

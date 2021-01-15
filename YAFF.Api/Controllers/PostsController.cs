@@ -24,9 +24,13 @@ namespace YAFF.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPosts([FromQuery] PaginationDto request)
         {
-            var result = await Mediator.Send(new GetPostsQuery {Page = request.Page, PageSize = request.PageSize});
+            var result = await Mediator.Send(new GetPostsQuery
+            {
+                Page = request.Page,
+                PageSize = request.PageSize
+            });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? NotFound(result.ToApiError(404))
                 : Ok(result.ToApiResponse(200));
         }
 
@@ -52,7 +56,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? NotFound(result.ToApiError(404))
                 : Ok(result.ToApiResponse(200));
         }
 

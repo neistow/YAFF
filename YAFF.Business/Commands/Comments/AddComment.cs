@@ -65,7 +65,7 @@ namespace YAFF.Business.Commands.Comments
                 Author = user,
                 AuthorId = user.Id,
                 ReplyTo = request.ReplyTo,
-                DateCommented = DateTime.UtcNow
+                DateAdded = DateTime.UtcNow
             };
 
             await _unitOfWork.CommentRepository.AddCommentAsync(comment);

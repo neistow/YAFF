@@ -61,8 +61,9 @@ namespace YAFF.Business.Commands.Posts
                 Id = Guid.NewGuid(),
                 Title = request.Title,
                 Body = request.Body,
+                Author = user,
                 AuthorId = request.AuthorId,
-                DatePosted = DateTime.UtcNow,
+                DateAdded = DateTime.UtcNow,
                 Tags = tags
             };
             await _unitOfWork.PostRepository.AddPostAsync(post);
