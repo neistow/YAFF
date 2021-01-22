@@ -10,15 +10,14 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using YAFF.Core.Configs;
+using YAFF.Core.Entities;
+using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Business.Commands.Auth
 {
     public class GenerateJwtTokenCommand : IRequest<string>
     {
-        public Guid UserId { get; set; }
-        public string UserName { get; set; }
-        public string UserEmail { get; set; }
-        public IEnumerable<string> Roles { get; set; }
+        public User User { get; init; }
     }
 
     public class GenerateJwtTokenCommandHandler : IRequestHandler<GenerateJwtTokenCommand, string>
@@ -34,22 +33,27 @@ namespace YAFF.Business.Commands.Auth
         {
             var claims = new List<Claim>
             {
-                new Claim("Id", request.UserId.ToString()),
-                new Claim("Name", request.UserName),
-                new Claim("Email", request.UserEmail),
+                new Claim("Id", request.User.Id.ToString()),
+                new Claim("UserName", request.User.UserName),
+                new Claim("Email", request.User.Email)
             };
-            claims.AddRange(request.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
-            var jwtToken = new JwtSecurityToken(
-                _tokenConfig.Issuer,
-                _tokenConfig.Audience,
-                claims,
-                expires: DateTime.UtcNow.AddMinutes(_tokenConfig.AccessTokenExpirationMinutes),
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenConfig.Secret)),
-                    SecurityAlgorithms.HmacSha256Signature));
+            var credentials = new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenConfig.Secret)),
+                SecurityAlgorithms.HmacSha512Signature);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(_tokenConfig.AccessTokenExpirationMinutes),
+                SigningCredentials = credentials,
+                Issuer = _tokenConfig.Issuer,
+                Audience = _tokenConfig.Audience
+            };
 
-            return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(jwtToken));
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return Task.FromResult(tokenHandler.WriteToken(token));
         }
     }
 }

@@ -1,33 +1,39 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Interfaces.Data;
+using YAFF.Data;
+using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Queries.Posts
 {
     public class GetPostQuery : IRequest<Result<PostDto>>
     {
-        public Guid Id { get; set; }
+        public int Id { get; init; }
     }
 
     public class GetPostQueryHandler : IRequestHandler<GetPostQuery, Result<PostDto>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ForumDbContext _forumDbContext;
         private readonly IMapper _mapper;
 
-        public GetPostQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetPostQueryHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _forumDbContext = forumDbContext;
             _mapper = mapper;
         }
 
         public async Task<Result<PostDto>> Handle(GetPostQuery request, CancellationToken cancellationToken)
         {
-            var post = await _unitOfWork.PostRepository.GetPostAsync(request.Id);
+            var post = await _forumDbContext.Posts
+                .AsNoTracking()
+                .IncludeAuthor()
+                .IncludeLikes()
+                .IncludeTags()
+                .SingleOrDefaultAsync(p => p.Id == request.Id);
             if (post == null)
             {
                 return Result<PostDto>.Failure(nameof(request.Id), "Post doesnt exist");

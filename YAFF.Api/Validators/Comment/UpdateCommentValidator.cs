@@ -7,7 +7,7 @@ namespace YAFF.Api.Validators.Comment
     {
         public UpdateCommentValidator()
         {
-            RuleFor(pc => pc.Id).NotEmpty();
+            RuleFor(pc => pc.Id).NotEmpty().GreaterThan(0);
             RuleFor(pc => pc.Body).NotEmpty().MaximumLength(1000);
         }
     }

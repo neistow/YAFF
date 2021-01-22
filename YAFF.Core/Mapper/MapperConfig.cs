@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoMapper;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
+using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Core.Mapper
 {
@@ -10,21 +12,28 @@ namespace YAFF.Core.Mapper
         public MapperConfig()
         {
             CreateMap<User, UserDto>()
-                .ForMember(ui => ui.Avatar, o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
+                .ForMember(u => u.Avatar,
+                    o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
             CreateMap<User, AuthorDto>()
-                .ForMember(ui => ui.Avatar, o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
+                .ForMember(a => a.Avatar,
+                    o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
 
             CreateMap<Tag, TagDto>()
-                .ForMember(t => t.Id, o => o.MapFrom(t => t.TagId));
+                .ForMember(t => t.Id,
+                    o => o.MapFrom(t => t.Id));
             CreateMap<Post, PostListItemDto>()
-                .ForMember(p => p.Author, o => o.MapFrom(p => p.Author));
+                .ForMember(p => p.Author,
+                    o => o.MapFrom(p => p.Author));
 
             CreateMap<Post, PostDto>()
-                .ForMember(p => p.Author, o => o.MapFrom(p => p.Author))
-                .ForMember(p => p.Tags, o => o.MapFrom(p => p.Tags.Select(t => t.Name)))
-                .ForMember(p => p.PostLikes, o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
+                .ForMember(p => p.Author,
+                    o => o.MapFrom(p => p.Author))
+                .ForMember(p => p.Tags,
+                    o => o.MapFrom(p => p.PostTags.Select(t => t.Tag.Name)))
+                .ForMember(p => p.PostLikes,
+                    o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
 
-            CreateMap<PostComment, PostCommentDto>();
+            CreateMap<Comment, CommentDto>();
         }
     }
 }

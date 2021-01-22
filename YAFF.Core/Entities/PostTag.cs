@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace YAFF.Core.Entities
+﻿namespace YAFF.Core.Entities
 {
-    public record PostTag
+    public class PostTag
     {
-        public Guid TagId { get; init; }
-        public Tag Tag { get; init; }
-        
-        public Guid PostId { get; init; }
+        public int PostId { get; init; }
         public Post Post { get; init; }
+
+        public int TagId { get; init; }
+        public Tag Tag { get; init; }
     }
 }

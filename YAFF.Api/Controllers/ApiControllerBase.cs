@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +17,12 @@ namespace YAFF.Api.Controllers
             Mediator = mediator;
         }
 
-        protected Guid CurrentUserId
+        protected int CurrentUserId
         {
             get
             {
-                var idClaim = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
-                return !Guid.TryParse(idClaim!.Value, out var id) ? Guid.Empty : id;
+                var claim = HttpContext.User.Claims.Single(c => c.Type == "Id");
+                return int.Parse(claim.Value);
             }
         }
     }

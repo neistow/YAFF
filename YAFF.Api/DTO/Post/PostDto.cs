@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace YAFF.Api.DTO.Post
 {
@@ -7,6 +6,6 @@ namespace YAFF.Api.DTO.Post
     {
         public string Title { get; init; }
         public string Body { get; init; }
-        public List<Guid> Tags { get; init; }
+        public List<string> Tags { get; init; }
     }
 }

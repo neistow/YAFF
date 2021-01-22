@@ -16,14 +16,14 @@ namespace YAFF.Api.Extensions
             return new ApiError(statusCode, result.Field, result.Message);
         }
 
-        public static ApiResponse<T> ToApiResponse<T>(this Result<T> result, int statusCode)
+        public static T ToApiResponse<T>(this Result<T> result)
         {
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException("Result has failed");
             }
 
-            return new ApiResponse<T>(statusCode, result.Data);
+            return result.Data;
         }
     }
 }

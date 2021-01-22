@@ -1,12 +1,8 @@
-﻿using System;
-
-namespace YAFF.Core.Entities
+﻿namespace YAFF.Core.Entities
 {
-    public record Photo
+    public class Photo
     {
-        public Guid Id { get; init; }
-        public string FileName { get; init; }
-        public Guid? ThumbnailId { get; init; }
-        public Photo Thumbnail { get; init; }
+        public int Id { get; set; }
+        public string FileName { get; set; }
     }
 }

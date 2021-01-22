@@ -5,38 +5,47 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Interfaces.Data;
+using YAFF.Data;
+using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Queries.Posts
 {
     public class GetPostsQuery : IRequest<Result<PostListDto>>
     {
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
     }
 
     public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<PostListDto>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ForumDbContext _forumDbContext;
         private readonly IMapper _mapper;
 
-        public GetPostsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetPostsQueryHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _forumDbContext = forumDbContext;
             _mapper = mapper;
         }
 
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
-            var posts = await _unitOfWork.PostRepository.GetPostsAsync(request.Page, request.PageSize);
-            var allPostsCount = await _unitOfWork.PostRepository.GetPostsCount();
-
+            var posts = await _forumDbContext.Posts
+                .AsNoTracking()
+                .IncludeLikes()
+                .IncludeAuthor()
+                .IncludeTags()
+                .OrderByDescending(p => p.DateAdded)
+                .Paginate(request.Page, request.PageSize)
+                .ToListAsync();
+            var allPostsCount = await _forumDbContext.Posts.CountAsync();
+            
             var shortenedPosts = posts.Select(post =>
             {
-                var bodySummary = post.Body.Split().Take(40);
-                return post with {Body = $"{string.Join(' ', bodySummary)}..."};
+                post.Body = string.Join(" ", post.Body.Split().Take(40));
+                return post;
             });
 
             if (!shortenedPosts.Any())

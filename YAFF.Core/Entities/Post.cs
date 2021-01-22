@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Core.Entities
 {
-    public record Post
+    public class Post
     {
-        public Guid Id { get; init; }
-        public string Title { get; init; }
-        public string Body { get; init; }
-        public DateTime DateAdded { get; init; }
-        public DateTime? DateEdited { get; init; }
-        public int LikesCount { get; init; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public DateTime DateAdded { get; set; }
+        public DateTime? DateEdited { get; set; }
+        public int LikesCount => PostLikes.Count();
 
-        public Guid AuthorId { get; init; }
-        public User Author { get; init; }
+        public int AuthorId { get; set; }
+        public User Author { get; set; }
 
-        public ICollection<Tag> Tags { get; init; } = new List<Tag>();
-        public IEnumerable<PostLike> PostLikes { get; init; } = new List<PostLike>();
-        public IEnumerable<PostComment> PostComments { get; init; } = new List<PostComment>();
+        public ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
+        public IEnumerable<PostLike> PostLikes { get; set; } = new List<PostLike>();
+        public IEnumerable<Comment> PostComments { get; set; } = new List<Comment>();
     }
 }

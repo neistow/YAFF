@@ -37,7 +37,7 @@ namespace YAFF.Api.Extensions
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(o =>
             {
-                o.RequireHttpsMetadata = true;
+                o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -47,8 +47,7 @@ namespace YAFF.Api.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret)),
                     ValidateAudience = true,
                     ValidAudience = jwtConfig.Audience,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(1)
+                    ValidateLifetime = true
                 };
             });
         }

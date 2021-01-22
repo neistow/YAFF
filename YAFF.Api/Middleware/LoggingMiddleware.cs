@@ -28,9 +28,9 @@ namespace YAFF.Api.Middleware
                 stopwatch.Stop();
                 _logger.LogInformation(
                     "Request {method} {url} => {statusCode} handled in {timeElapsed}ms",
-                    httpContext.Request?.Method,
-                    httpContext.Request?.Path.Value,
-                    httpContext.Response?.StatusCode,
+                    httpContext.Request.Method,
+                    httpContext.Request.Path.Value,
+                    httpContext.Response.StatusCode,
                     stopwatch.ElapsedMilliseconds);
             }
         }

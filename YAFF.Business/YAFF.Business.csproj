@@ -5,20 +5,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
       <PackageReference Include="MediatR" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="1.0.2" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Common" />
       <Folder Include="Extensions" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\YAFF.Core\YAFF.Core.csproj" />
+      <ProjectReference Include="..\YAFF.Data\YAFF.Data.csproj" />
     </ItemGroup>
 
 </Project>

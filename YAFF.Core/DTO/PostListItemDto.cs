@@ -5,7 +5,7 @@ namespace YAFF.Core.DTO
 {
     public record PostListItemDto
     {
-        public Guid Id { get; init; }
+        public int Id { get; init; }
         public string Title { get; init; }
         public string Body { get; init; }
         public DateTime DateAdded { get; init; }

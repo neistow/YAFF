@@ -3,75 +3,78 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
-using YAFF.Core.Interfaces.Data;
+using YAFF.Core.Entities.Identity;
+using YAFF.Data;
 
 namespace YAFF.Business.Commands.Comments
 {
-    public class AddCommentRequest : IRequest<Result<PostCommentDto>>
+    public class AddCommentRequest : IRequest<Result<CommentDto>>
     {
-        public Guid PostId { get; set; }
-        public string Body { get; set; }
-        public Guid? ReplyTo { get; set; }
-        public Guid AuthorId { get; set; }
+        public int PostId { get; init; }
+        public string Body { get; init; }
+        public int? ReplyTo { get; init; }
+        public int AuthorId { get; init; }
     }
 
-    public class AddCommentRequestHandler : IRequestHandler<AddCommentRequest, Result<PostCommentDto>>
+    public class AddCommentRequestHandler : IRequestHandler<AddCommentRequest, Result<CommentDto>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ForumDbContext _forumDbContext;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public AddCommentRequestHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public AddCommentRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _forumDbContext = forumDbContext;
+            _userManager = userManager;
             _mapper = mapper;
         }
 
-        public async Task<Result<PostCommentDto>> Handle(AddCommentRequest request, CancellationToken cancellationToken)
+        public async Task<Result<CommentDto>> Handle(AddCommentRequest request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.AuthorId);
+            var user = await _userManager.FindByIdAsync(request.AuthorId.ToString());
             if (user == null)
             {
-                return Result<PostCommentDto>.Failure();
+                return Result<CommentDto>.Failure();
             }
 
             if (user.IsBanned)
             {
-                return Result<PostCommentDto>.Failure(string.Empty, "You are banned");
+                return Result<CommentDto>.Failure(string.Empty, "You are banned");
             }
 
-            var post = await _unitOfWork.PostRepository.GetPostAsync(request.PostId);
+            var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
             {
-                return Result<PostCommentDto>.Failure(nameof(request.PostId), "Post doesn't exist");
+                return Result<CommentDto>.Failure(nameof(request.PostId), "Post doesn't exist");
             }
 
             if (request.ReplyTo.HasValue)
             {
-                var replyComment = await _unitOfWork.CommentRepository.GetCommentAsync(request.ReplyTo.Value);
+                var replyComment = await _forumDbContext.Comments.FindAsync(request.ReplyTo.Value);
                 if (replyComment == null)
                 {
-                    return Result<PostCommentDto>.Failure(nameof(request.ReplyTo), "Comment doesn't exist");
+                    return Result<CommentDto>.Failure(nameof(request.ReplyTo), "Comment doesn't exist");
                 }
             }
 
-            var comment = new PostComment
+            var comment = new Comment
             {
-                Id = Guid.NewGuid(),
                 Body = request.Body,
-                PostId = post.Id,
-                Author = user,
-                AuthorId = user.Id,
-                ReplyTo = request.ReplyTo,
+                PostId = request.PostId,
+                ReplyToId = request.ReplyTo,
+                AuthorId = request.AuthorId,
                 DateAdded = DateTime.UtcNow
             };
 
-            await _unitOfWork.CommentRepository.AddCommentAsync(comment);
+            await _forumDbContext.Comments.AddAsync(comment);
+            await _forumDbContext.SaveChangesAsync();
 
-            var result = _mapper.Map<PostCommentDto>(comment);
-            return Result<PostCommentDto>.Success(result);
+            var result = _mapper.Map<CommentDto>(comment);
+            return Result<CommentDto>.Success(result);
         }
     }
 }

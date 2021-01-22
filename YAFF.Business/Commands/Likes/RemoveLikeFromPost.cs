@@ -1,31 +1,33 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using YAFF.Core.Common;
-using YAFF.Core.Interfaces.Data;
+using YAFF.Core.Entities.Identity;
+using YAFF.Data;
 
 namespace YAFF.Business.Commands.Likes
 {
     public class RemoveLikeFromPostRequest : IRequest<Result<object>>
     {
-        public Guid PostId { get; set; }
-        public Guid UserId { get; set; }
+        public int PostId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class RemoveLikeFromPostRequestHandler : IRequestHandler<RemoveLikeFromPostRequest, Result<object>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ForumDbContext _forumDbContext;
+        private readonly UserManager<User> _userManager;
 
-        public RemoveLikeFromPostRequestHandler(IUnitOfWork unitOfWork)
+        public RemoveLikeFromPostRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager)
         {
-            _unitOfWork = unitOfWork;
+            _forumDbContext = forumDbContext;
+            _userManager = userManager;
         }
 
         public async Task<Result<object>> Handle(RemoveLikeFromPostRequest request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
             {
                 return Result<object>.Failure(nameof(request.UserId), "User doesn't exist.");
@@ -36,19 +38,20 @@ namespace YAFF.Business.Commands.Likes
                 return Result<object>.Failure(string.Empty, "You are banned.");
             }
 
-            var post = await _unitOfWork.PostRepository.GetPostAsync(request.PostId);
+            var post = await _forumDbContext.Posts.FindAsync(user.Id);
             if (post == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");
             }
 
-            var like = post.PostLikes.SingleOrDefault(pl => pl.UserId == user.Id);
+            var like = await _forumDbContext.PostLikes.FindAsync(user.Id, post.Id);
             if (like == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "This post isn't liked");
             }
 
-            await _unitOfWork.LikeRepository.RemoveLikeAsync(post.Id, user.Id);
+            _forumDbContext.PostLikes.Remove(like);
+            await _forumDbContext.SaveChangesAsync();
 
             return Result<object>.Success();
         }

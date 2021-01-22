@@ -1,13 +1,13 @@
-﻿using System;
+﻿using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Core.Entities
 {
     public record PostLike
     {
-        public Guid PostId { get; init; }
-        public Post Post { get; init; }
+        public int PostId { get; set; }
+        public Post Post { get; set; }
 
-        public Guid UserId { get; init; }
-        public User User { get; init; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

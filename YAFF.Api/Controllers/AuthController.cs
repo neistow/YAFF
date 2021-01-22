@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO.Auth;
 using YAFF.Api.Extensions;
-using YAFF.Api.Helpers;
 using YAFF.Business.Commands.Auth;
-using YAFF.Business.Commands.Users;
 
 namespace YAFF.Api.Controllers
 {
@@ -20,29 +18,27 @@ namespace YAFF.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Name");
+            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "UserName");
             return Ok($"You are authorised as {username!.Value}");
         }
 
         [AllowAnonymous]
-        [EnableTransaction]
         [HttpPost("[action]")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            var result = await Mediator.Send(new CreateUserCommand
+            var result = await Mediator.Send(new RegisterUserCommand
             {
                 Email = registerDto.Email,
-                NickName = registerDto.Nickname,
+                UserName = registerDto.UserName,
                 Password = registerDto.Password
             });
 
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
         [AllowAnonymous]
-        [EnableTransaction]
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -54,28 +50,7 @@ namespace YAFF.Api.Controllers
 
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
-        }
-
-        [EnableTransaction]
-        [HttpPost("[action]")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
-        {
-            if (string.IsNullOrWhiteSpace(request.Token))
-            {
-                return Unauthorized();
-            }
-
-            var result =
-                await Mediator.Send(new RefreshTokenCommand
-                {
-                    UserId = CurrentUserId,
-                    RefreshToken = request.Token
-                });
-
-            return !result.Succeeded
-                ? Unauthorized()
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
     }
 }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using YAFF.Api.DTO;
 using YAFF.Api.DTO.Comment;
 using YAFF.Api.Extensions;
-using YAFF.Api.Helpers;
 using YAFF.Business.Commands.Comments;
 
 namespace YAFF.Api.Controllers
@@ -16,7 +13,6 @@ namespace YAFF.Api.Controllers
         {
         }
 
-        [EnableTransaction]
         [HttpPost]
         public async Task<IActionResult> AddComment([FromBody] CreateCommentDto request)
         {
@@ -29,10 +25,9 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
-        [EnableTransaction]
         [HttpPut]
         public async Task<IActionResult> EditComment([FromBody] UpdateCommentDto request)
         {
@@ -44,12 +39,11 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
-        [EnableTransaction]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment([FromRoute] Guid id)
+        [HttpDelete("{id:min(1)}")]
+        public async Task<IActionResult> DeleteComment([FromRoute] int id)
         {
             var result = await Mediator.Send(new DeleteCommentRequest
             {
@@ -58,7 +52,7 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
     }
 }

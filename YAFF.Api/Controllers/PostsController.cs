@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO;
 using YAFF.Api.DTO.Post;
 using YAFF.Api.Extensions;
-using YAFF.Api.Helpers;
 using YAFF.Business.Commands.Likes;
 using YAFF.Business.Commands.Posts;
 using YAFF.Business.Queries.Comments;
@@ -22,7 +20,7 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] PaginationDto request)
+        public async Task<IActionResult> GetPosts([FromQuery] PostQueryDto request)
         {
             var result = await Mediator.Send(new GetPostsQuery
             {
@@ -31,22 +29,22 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? NotFound(result.ToApiError(404))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPost([FromRoute] Guid id)
+        [HttpGet("{id:min(1)}")]
+        public async Task<IActionResult> GetPost([FromRoute] int id)
         {
             var result = await Mediator.Send(new GetPostQuery {Id = id});
             return !result.Succeeded
                 ? NotFound(result.ToApiError(404))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
         [AllowAnonymous]
-        [HttpGet("{postId}/comments")]
-        public async Task<IActionResult> Comments([FromRoute] Guid postId, [FromQuery] PaginationDto request)
+        [HttpGet("{postId:min(1)}/comments")]
+        public async Task<IActionResult> Comments([FromRoute] int postId, [FromQuery] PaginationDto request)
         {
             var result = await Mediator.Send(new GetCommentsOfPostRequest
             {
@@ -57,10 +55,9 @@ namespace YAFF.Api.Controllers
 
             return !result.Succeeded
                 ? NotFound(result.ToApiError(404))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
-        [EnableTransaction]
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] PostDto post)
         {
@@ -74,13 +71,12 @@ namespace YAFF.Api.Controllers
 
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse(201));
+                : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse());
         }
 
 
-        [EnableTransaction]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditPost([FromRoute] Guid id, [FromBody] PostDto post)
+        [HttpPut("{id:min(1)}")]
+        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostDto post)
         {
             var result = await Mediator.Send(new EditPostCommand
             {
@@ -93,12 +89,11 @@ namespace YAFF.Api.Controllers
 
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
-        [EnableTransaction]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePost([FromRoute] Guid id)
+        [HttpDelete("{id:min(1)}")]
+        public async Task<IActionResult> DeletePost([FromRoute] int id)
         {
             var result = await Mediator.Send(new DeletePostCommand
             {
@@ -111,9 +106,8 @@ namespace YAFF.Api.Controllers
                 : Ok();
         }
 
-        [EnableTransaction]
-        [HttpPost("{postId}/addLike")]
-        public async Task<IActionResult> AddLikeToPost([FromRoute] Guid postId)
+        [HttpPost("{postId:min(1)}/addLike")]
+        public async Task<IActionResult> AddLikeToPost([FromRoute] int postId)
         {
             var result = await Mediator.Send(new AddLikeToPostRequest
             {
@@ -122,12 +116,11 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
 
-        [EnableTransaction]
-        [HttpPost("{postId}/removeLike")]
-        public async Task<IActionResult> RemoveLikeFromPost([FromRoute] Guid postId)
+        [HttpPost("{postId:min(1)}/removeLike")]
+        public async Task<IActionResult> RemoveLikeFromPost([FromRoute] int postId)
         {
             var result = await Mediator.Send(new RemoveLikeFromPostRequest
             {
@@ -136,7 +129,7 @@ namespace YAFF.Api.Controllers
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError(400))
-                : Ok(result.ToApiResponse(200));
+                : Ok(result.ToApiResponse());
         }
     }
 }

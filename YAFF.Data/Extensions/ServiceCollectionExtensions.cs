@@ -1,20 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using YAFF.Core.Interfaces.Data;
-using YAFF.Core.Interfaces.Repositories;
-using YAFF.Data.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace YAFF.Data.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddUnitOfWork(this IServiceCollection services)
+        public static void ConfigureDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-        }
-
-        public static void AddDbConnectionFactory(this IServiceCollection services)
-        {
-            services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+            services.AddDbContext<ForumDbContext>(o => o.UseNpgsql(configuration["Data:ConnectionString"],
+                b => b.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         }
     }
 }

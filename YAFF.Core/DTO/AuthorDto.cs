@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace YAFF.Core.DTO
+﻿namespace YAFF.Core.DTO
 {
     public class AuthorDto
     {
-        public Guid Id { get; init; }
-        public string NickName { get; init; }
+        public int Id { get; init; }
+        public string UserName { get; init; }
         public string Avatar { get; init; }
     }
 }

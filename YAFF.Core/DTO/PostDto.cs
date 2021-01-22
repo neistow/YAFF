@@ -6,7 +6,7 @@ namespace YAFF.Core.DTO
 {
     public record PostDto
     {
-        public Guid Id { get; init; }
+        public int Id { get; init; }
         public string Title { get; init; }
         public string Body { get; init; }
         public DateTime DateAdded { get; init; }
@@ -16,6 +16,6 @@ namespace YAFF.Core.DTO
         public AuthorDto Author { get; init; }
 
         public IEnumerable<string> Tags { get; init; } = new List<string>();
-        public IEnumerable<Guid> PostLikes { get; init; } = new List<Guid>();
+        public IEnumerable<int> PostLikes { get; init; } = new List<int>();
     }
 }

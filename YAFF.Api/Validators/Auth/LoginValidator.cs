@@ -7,7 +7,7 @@ namespace YAFF.Api.Validators.Auth
     {
         public LoginValidator()
         {
-            RuleFor(r => r.Email).EmailAddress();
+            RuleFor(r => r.Email).NotEmpty().EmailAddress();
             RuleFor(r => r.Password).NotEmpty();
         }
     }

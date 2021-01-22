@@ -3,49 +3,49 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
-using YAFF.Core.DTO;
-using YAFF.Core.Entities;
-using YAFF.Core.Extensions;
-using YAFF.Core.Interfaces.Data;
+using YAFF.Core.Entities.Identity;
+using YAFF.Data;
 
 namespace YAFF.Business.Commands.Posts
 {
     public class DeletePostCommand : IRequest<Result<object>>
     {
-        public Guid PostId { get; set; }
-        public Guid UserId { get; set; }
+        public int PostId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Result<object>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ForumDbContext _forumDbContext;
+        private readonly UserManager<User> _userManager;
 
-        public DeletePostCommandHandler(IUnitOfWork unitOfWork)
+        public DeletePostCommandHandler(ForumDbContext forumDbContext, UserManager<User> userManager)
         {
-            _unitOfWork = unitOfWork;
+            _forumDbContext = forumDbContext;
+            _userManager = userManager;
         }
 
         public async Task<Result<object>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
         {
-            var post = await _unitOfWork.PostRepository.GetPostAsync(request.PostId);
-            if (post == null)
-            {
-                return Result<object>.Failure(nameof(request.PostId), "No post with such id");
-            }
-
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
             {
                 return Result<object>.Failure();
             }
 
-            if (post.AuthorId != user.Id && !user.CanDeletePosts())
+            var post = await _forumDbContext.Posts
+                .Where(p => p.AuthorId == user.Id && p.Id == request.PostId)
+                .FirstOrDefaultAsync();
+            if (post == null)
             {
-                return Result<object>.Failure(nameof(request.PostId), "You are not allowed to delete post.");
+                return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");
             }
 
-            await _unitOfWork.PostRepository.DeletePostAsync(post.Id);
+            _forumDbContext.Posts.Remove(post);
+            await _forumDbContext.SaveChangesAsync();
 
             return Result<object>.Success();
         }

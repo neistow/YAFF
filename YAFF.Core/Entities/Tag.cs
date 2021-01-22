@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace YAFF.Core.Entities
+﻿namespace YAFF.Core.Entities
 {
     public record Tag
     {
-        public Guid TagId { get; init; }
-        public string Name { get; init; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
