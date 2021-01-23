@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities.Identity;
@@ -45,15 +46,12 @@ namespace YAFF.Business.Commands.Comments
                 return Result<CommentDto>.Failure(string.Empty, "You are banned");
             }
 
-            var comment = await _forumDbContext.Comments.FindAsync(request.CommentId);
+            var comment = await _forumDbContext.Comments
+                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == user.Id);
             if (comment == null)
             {
-                return Result<CommentDto>.Failure(nameof(request.CommentId), "Comment doesn't exist");
-            }
-
-            if (comment.AuthorId != user.Id)
-            {
-                return Result<CommentDto>.Failure();
+                return Result<CommentDto>.Failure(nameof(request.CommentId),
+                    "Comment doesn't exist or you can't edit it");
             }
 
             comment.Body = request.Body;

@@ -2,7 +2,6 @@
 {
     public record UpdateCommentDto
     {
-        public int Id { get; init; }
         public string Body { get; init; }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.Entities;
 using YAFF.Core.Entities.Identity;
@@ -35,15 +37,11 @@ namespace YAFF.Business.Commands.Comments
                 return Result<object>.Failure();
             }
 
-            var comment = await _forumDbContext.Comments.FindAsync(request.CommentId);
+            var comment = await _forumDbContext.Comments
+                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == user.Id);
             if (comment == null)
             {
-                return Result<object>.Failure(nameof(request.CommentId), "Comment doesn't exist");
-            }
-
-            if (comment.AuthorId != user.Id)
-            {
-                return Result<object>.Failure();
+                return Result<object>.Failure(nameof(request.CommentId), "Comment doesn't exist or you can't edit it");
             }
 
             _forumDbContext.Comments.Remove(comment);

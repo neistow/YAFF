@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.Entities.Identity;
 using YAFF.Data;
@@ -44,7 +45,8 @@ namespace YAFF.Business.Commands.Likes
                 return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");
             }
 
-            var like = await _forumDbContext.PostLikes.FindAsync(user.Id, post.Id);
+            var like = await _forumDbContext.PostLikes
+                .SingleOrDefaultAsync(pl => pl.PostId == request.PostId && pl.UserId == request.UserId);
             if (like == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "This post isn't liked");

@@ -37,11 +37,10 @@ namespace YAFF.Business.Commands.Posts
             }
 
             var post = await _forumDbContext.Posts
-                .Where(p => p.AuthorId == user.Id && p.Id == request.PostId)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync(p => p.AuthorId == user.Id && p.Id == request.PostId);
             if (post == null)
             {
-                return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");
+                return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist or you can't edit it");
             }
 
             _forumDbContext.Posts.Remove(post);

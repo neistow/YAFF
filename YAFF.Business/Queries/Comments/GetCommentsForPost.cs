@@ -43,6 +43,7 @@ namespace YAFF.Business.Queries.Comments
             var comments = await _forumDbContext.Comments
                 .IncludeAuthor()
                 .Where(c => c.PostId == query.PostId)
+                .OrderByDescending(c => c.DateAdded)
                 .Paginate(query.Page, query.PageSize)
                 .AsNoTracking()
                 .ToListAsync();

@@ -63,6 +63,7 @@ namespace YAFF.Business.Commands.Posts
 
             post.Title = request.Title;
             post.Body = request.Body;
+            post.DateEdited = DateTime.UtcNow;
 
             _forumDbContext.PostTags.RemoveRange(post.PostTags);
 

@@ -41,7 +41,7 @@ namespace YAFF.Business.Commands.Likes
                 return Result<object>.Failure(string.Empty, "You are banned.");
             }
 
-            var post = await _forumDbContext.Posts.FindAsync(user.Id);
+            var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");
