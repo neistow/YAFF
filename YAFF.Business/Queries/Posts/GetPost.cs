@@ -29,10 +29,10 @@ namespace YAFF.Business.Queries.Posts
         public async Task<Result<PostDto>> Handle(GetPostQuery request, CancellationToken cancellationToken)
         {
             var post = await _forumDbContext.Posts
-                .AsNoTracking()
                 .IncludeAuthor()
                 .IncludeLikes()
                 .IncludeTags()
+                .AsNoTracking()
                 .SingleOrDefaultAsync(p => p.Id == request.Id);
             if (post == null)
             {

@@ -34,7 +34,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -49,7 +49,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
     }

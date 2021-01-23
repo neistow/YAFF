@@ -33,18 +33,18 @@ namespace YAFF.Business.Queries.Posts
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
             var posts = await _forumDbContext.Posts
-                .AsNoTracking()
                 .IncludeLikes()
                 .IncludeAuthor()
                 .IncludeTags()
                 .OrderByDescending(p => p.DateAdded)
                 .Paginate(request.Page, request.PageSize)
+                .AsNoTracking()
                 .ToListAsync();
             var allPostsCount = await _forumDbContext.Posts.CountAsync();
-            
+
             var shortenedPosts = posts.Select(post =>
             {
-                post.Body = string.Join(" ", post.Body.Split().Take(40));
+                post.Body = $"{string.Join(" ", post.Body.Split().Take(40))}...";
                 return post;
             });
 

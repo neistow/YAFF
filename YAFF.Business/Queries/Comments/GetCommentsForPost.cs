@@ -13,53 +13,53 @@ using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Queries.Comments
 {
-    public class GetCommentsOfPostRequest : IRequest<Result<CommentListDto>>
+    public class GetCommentsOfPostQuery : IRequest<Result<CommentListDto>>
     {
         public int PostId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
     }
 
-    public class
-        GetCommentsOfPostRequestHandler : IRequestHandler<GetCommentsOfPostRequest, Result<CommentListDto>>
+    public class GetCommentsOfPostQueryHandler : IRequestHandler<GetCommentsOfPostQuery, Result<CommentListDto>>
     {
         private readonly ForumDbContext _forumDbContext;
         private readonly IMapper _mapper;
 
-        public GetCommentsOfPostRequestHandler(ForumDbContext forumDbContext, IMapper mapper)
+        public GetCommentsOfPostQueryHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
             _mapper = mapper;
         }
 
-        public async Task<Result<CommentListDto>> Handle(GetCommentsOfPostRequest request,
+        public async Task<Result<CommentListDto>> Handle(GetCommentsOfPostQuery query,
             CancellationToken cancellationToken)
         {
-            var post = await _forumDbContext.Posts.FindAsync(request.PostId);
+            var post = await _forumDbContext.Posts.FindAsync(query.PostId);
             if (post == null)
             {
-                return Result<CommentListDto>.Failure(nameof(request.PostId), "Post doesn't exist.");
+                return Result<CommentListDto>.Failure(nameof(query.PostId), "Post doesn't exist.");
             }
 
             var comments = await _forumDbContext.Comments
-                .AsNoTracking()
                 .IncludeAuthor()
-                .Paginate(request.Page, request.PageSize)
+                .Where(c => c.PostId == query.PostId)
+                .Paginate(query.Page, query.PageSize)
+                .AsNoTracking()
                 .ToListAsync();
             var allCommentsCount = await _forumDbContext.Comments.CountAsync();
 
             if (!comments.Any())
             {
-                return Result<CommentListDto>.Failure(nameof(request.Page), "No comments found");
+                return Result<CommentListDto>.Failure(nameof(query.Page), "No comments found");
             }
 
             var result = _mapper.Map<IEnumerable<CommentDto>>(comments);
             return Result<CommentListDto>.Success(new CommentListDto
             {
                 Comments = result,
-                Page = request.Page,
-                PageSize = request.PageSize,
-                TotalPages = (int) Math.Ceiling(allCommentsCount / (double) request.PageSize)
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalPages = (int) Math.Ceiling(allCommentsCount / (double) query.PageSize)
             });
         }
     }

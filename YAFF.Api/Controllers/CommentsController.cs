@@ -24,7 +24,7 @@ namespace YAFF.Api.Controllers
                 AuthorId = CurrentUserId
             });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -38,7 +38,7 @@ namespace YAFF.Api.Controllers
                 AuthorId = CurrentUserId
             });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -51,7 +51,7 @@ namespace YAFF.Api.Controllers
                 UserId = CurrentUserId
             });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
     }

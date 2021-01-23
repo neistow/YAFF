@@ -28,7 +28,7 @@ namespace YAFF.Api.Controllers
                 PageSize = request.PageSize
             });
             return !result.Succeeded
-                ? NotFound(result.ToApiError(404))
+                ? NotFound(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -38,7 +38,7 @@ namespace YAFF.Api.Controllers
         {
             var result = await Mediator.Send(new GetPostQuery {Id = id});
             return !result.Succeeded
-                ? NotFound(result.ToApiError(404))
+                ? NotFound(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -46,7 +46,7 @@ namespace YAFF.Api.Controllers
         [HttpGet("{postId:min(1)}/comments")]
         public async Task<IActionResult> Comments([FromRoute] int postId, [FromQuery] PaginationDto request)
         {
-            var result = await Mediator.Send(new GetCommentsOfPostRequest
+            var result = await Mediator.Send(new GetCommentsOfPostQuery
             {
                 PostId = postId,
                 Page = request.Page,
@@ -54,7 +54,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? NotFound(result.ToApiError(404))
+                ? NotFound(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -70,7 +70,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse());
         }
 
@@ -88,7 +88,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -102,7 +102,7 @@ namespace YAFF.Api.Controllers
             });
 
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok();
         }
 
@@ -115,7 +115,7 @@ namespace YAFF.Api.Controllers
                 UserId = CurrentUserId
             });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
 
@@ -128,7 +128,7 @@ namespace YAFF.Api.Controllers
                 UserId = CurrentUserId
             });
             return !result.Succeeded
-                ? BadRequest(result.ToApiError(400))
+                ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
     }
