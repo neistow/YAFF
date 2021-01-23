@@ -46,7 +46,9 @@ namespace YAFF.Business.Queries.Comments
                 .Paginate(query.Page, query.PageSize)
                 .AsNoTracking()
                 .ToListAsync();
-            var allCommentsCount = await _forumDbContext.Comments.CountAsync();
+            var allCommentsCount = await _forumDbContext.Comments
+                .Where(c => c.PostId == query.PostId)
+                .CountAsync();
 
             if (!comments.Any())
             {
