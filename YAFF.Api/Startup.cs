@@ -54,6 +54,7 @@ namespace YAFF.Api
                 {
                     o.RegisterValidatorsFromAssembly(typeof(Startup).Assembly);
                     o.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    o.ValidatorOptions.LanguageManager.Enabled = false;
                 });
 
             services.ConfigureSwagger();
@@ -95,7 +96,6 @@ namespace YAFF.Api
                 DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture)
             });
 
-            app.UseStatusCodePages();
             app.UseRouting();
 
             app.UseCors();
@@ -105,7 +105,6 @@ namespace YAFF.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/ping", async context => { await context.Response.WriteAsync("Pong"); });
                 endpoints.MapControllers();
             });
         }
