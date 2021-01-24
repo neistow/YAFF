@@ -5,9 +5,14 @@ namespace YAFF.Api.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
-        public static void ConfigureLoggingMiddleware(this IApplicationBuilder app)
+        public static void UseLoggingMiddleware(this IApplicationBuilder app)
         {
             app.UseMiddleware<LoggingMiddleware>();
+        }
+
+        public static void UseLockoutMiddleware(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<UserLockoutMiddleware>();
         }
     }
 }

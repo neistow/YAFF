@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
-using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Posts
@@ -20,24 +16,16 @@ namespace YAFF.Business.Commands.Posts
     public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Result<object>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
 
-        public DeletePostCommandHandler(ForumDbContext forumDbContext, UserManager<User> userManager)
+        public DeletePostCommandHandler(ForumDbContext forumDbContext)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
         }
 
         public async Task<Result<object>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-            {
-                return Result<object>.Failure();
-            }
-
             var post = await _forumDbContext.Posts
-                .SingleOrDefaultAsync(p => p.AuthorId == user.Id && p.Id == request.PostId);
+                .SingleOrDefaultAsync(p => p.AuthorId == request.UserId && p.Id == request.PostId);
             if (post == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist or you can't edit it");

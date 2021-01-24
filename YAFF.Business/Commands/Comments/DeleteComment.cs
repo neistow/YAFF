@@ -1,13 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
-using YAFF.Core.Entities;
-using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Comments
@@ -21,24 +16,16 @@ namespace YAFF.Business.Commands.Comments
     public class DeleteCommentRequestHandler : IRequestHandler<DeleteCommentRequest, Result<object>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
 
-        public DeleteCommentRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager)
+        public DeleteCommentRequestHandler(ForumDbContext forumDbContext)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
         }
 
         public async Task<Result<object>> Handle(DeleteCommentRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-            {
-                return Result<object>.Failure();
-            }
-
             var comment = await _forumDbContext.Comments
-                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == user.Id);
+                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == request.UserId);
             if (comment == null)
             {
                 return Result<object>.Failure(nameof(request.CommentId), "Comment doesn't exist or you can't edit it");

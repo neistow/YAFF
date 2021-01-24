@@ -1,10 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
-using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Likes
@@ -18,28 +16,15 @@ namespace YAFF.Business.Commands.Likes
     public class RemoveLikeFromPostRequestHandler : IRequestHandler<RemoveLikeFromPostRequest, Result<object>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
 
-        public RemoveLikeFromPostRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager)
+        public RemoveLikeFromPostRequestHandler(ForumDbContext forumDbContext)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
         }
 
         public async Task<Result<object>> Handle(RemoveLikeFromPostRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-            {
-                return Result<object>.Failure(nameof(request.UserId), "User doesn't exist.");
-            }
-
-            if (user.IsBanned)
-            {
-                return Result<object>.Failure(string.Empty, "You are banned.");
-            }
-
-            var post = await _forumDbContext.Posts.FindAsync(user.Id);
+            var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
             {
                 return Result<object>.Failure(nameof(request.PostId), "Post doesn't exist");

@@ -71,7 +71,7 @@ namespace YAFF.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.ConfigureLoggingMiddleware();
+            app.UseLoggingMiddleware();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -102,6 +102,7 @@ namespace YAFF.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseLockoutMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

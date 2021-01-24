@@ -3,11 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
-using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Comments
@@ -23,29 +21,16 @@ namespace YAFF.Business.Commands.Comments
     public class AddCommentRequestHandler : IRequestHandler<AddCommentRequest, Result<CommentDto>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public AddCommentRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
+        public AddCommentRequestHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
             _mapper = mapper;
         }
 
         public async Task<Result<CommentDto>> Handle(AddCommentRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.AuthorId.ToString());
-            if (user == null)
-            {
-                return Result<CommentDto>.Failure();
-            }
-
-            if (user.IsBanned)
-            {
-                return Result<CommentDto>.Failure(string.Empty, "You are banned");
-            }
-
             var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
             {

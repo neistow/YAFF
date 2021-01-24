@@ -21,13 +21,11 @@ namespace YAFF.Business.Commands.Auth
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<UserDto>>
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
 
-        public RegisterUserCommandHandler(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper)
+        public RegisterUserCommandHandler(UserManager<User> userManager, IMapper mapper)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _mapper = mapper;
         }
 
@@ -35,7 +33,7 @@ namespace YAFF.Business.Commands.Auth
         {
             var user = new User
             {
-                Email = request.Email, 
+                Email = request.Email,
                 UserName = request.UserName,
                 RegistrationDate = DateTime.UtcNow
             };

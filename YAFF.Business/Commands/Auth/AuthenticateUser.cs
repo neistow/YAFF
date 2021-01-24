@@ -49,7 +49,8 @@ namespace YAFF.Business.Commands.Auth
 
             if (user.IsBanned)
             {
-                return Result<UserAuthenticatedDto>.Failure(string.Empty, "You are banned.");
+                return Result<UserAuthenticatedDto>.Failure(string.Empty,
+                    $"You are banned. Ban expiration date: {user.BanLiftDate}");
             }
 
             var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand {User = user});

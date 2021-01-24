@@ -3,11 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Comments
@@ -22,32 +20,19 @@ namespace YAFF.Business.Commands.Comments
     public class EditCommentRequestHandler : IRequestHandler<EditCommentRequest, Result<CommentDto>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public EditCommentRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
+        public EditCommentRequestHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
             _mapper = mapper;
         }
 
         public async Task<Result<CommentDto>> Handle(EditCommentRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.AuthorId.ToString());
-            if (user == null)
-            {
-                return Result<CommentDto>.Failure();
-            }
-
-            if (user.IsBanned)
-            {
-                return Result<CommentDto>.Failure(string.Empty, "You are banned");
-            }
-
             var comment = await _forumDbContext.Comments
-                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == user.Id);
+                .SingleOrDefaultAsync(c => c.Id == request.CommentId && c.AuthorId == request.AuthorId);
             if (comment == null)
             {
                 return Result<CommentDto>.Failure(nameof(request.CommentId),
