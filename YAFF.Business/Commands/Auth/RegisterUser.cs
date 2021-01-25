@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
+using YAFF.Core.Entities;
 using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Business.Commands.Auth
@@ -35,7 +36,10 @@ namespace YAFF.Business.Commands.Auth
             {
                 Email = request.Email,
                 UserName = request.UserName,
-                RegistrationDate = DateTime.UtcNow
+                Profile = new UserProfile
+                {
+                    RegistrationDate = DateTime.UtcNow
+                }
             };
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)

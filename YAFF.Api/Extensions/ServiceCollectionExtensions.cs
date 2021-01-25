@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using YAFF.Core.Configs;
+using YAFF.Core.Entities.Identity;
+using YAFF.Data;
 
 
 namespace YAFF.Api.Extensions
@@ -70,6 +73,14 @@ namespace YAFF.Api.Extensions
                 var openApiRequirement = new OpenApiSecurityRequirement {{securityRequirement, new List<string>()}};
                 s.AddSecurityRequirement(openApiRequirement);
             });
+        }
+
+        public static void ConfigureAspNetIdentity(this IServiceCollection services)
+        {
+            services.AddIdentityCore<User>(o => { o.User.RequireUniqueEmail = true; })
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<ForumDbContext>()
+                .AddSignInManager<SignInManager<User>>();
         }
     }
 }

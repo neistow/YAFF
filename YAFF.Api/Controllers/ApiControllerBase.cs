@@ -17,12 +17,12 @@ namespace YAFF.Api.Controllers
             Mediator = mediator;
         }
 
-        protected int CurrentUserId
+        protected int? CurrentUserId
         {
             get
             {
-                var claim = HttpContext.User.Claims.Single(c => c.Type == "Id");
-                return int.Parse(claim.Value);
+                var claim = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "Id");
+                return claim == null ? null : int.Parse(claim.Value);
             }
         }
     }

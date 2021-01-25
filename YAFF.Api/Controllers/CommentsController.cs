@@ -21,7 +21,7 @@ namespace YAFF.Api.Controllers
                 PostId = request.PostId,
                 Body = request.Body,
                 ReplyTo = request.ReplyTo,
-                AuthorId = CurrentUserId
+                AuthorId = CurrentUserId!.Value
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError())
@@ -35,7 +35,7 @@ namespace YAFF.Api.Controllers
             {
                 CommentId = id,
                 Body = request.Body,
-                AuthorId = CurrentUserId
+                AuthorId = CurrentUserId!.Value
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError())
@@ -48,7 +48,7 @@ namespace YAFF.Api.Controllers
             var result = await Mediator.Send(new DeleteCommentRequest
             {
                 CommentId = id,
-                UserId = CurrentUserId
+                UserId = CurrentUserId!.Value
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError())

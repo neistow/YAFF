@@ -1,6 +1,6 @@
 ﻿namespace YAFF.Core.DTO
 {
-    public class AuthorDto
+    public record AuthorDto
     {
         public int Id { get; init; }
         public string UserName { get; init; }

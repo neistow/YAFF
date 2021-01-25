@@ -8,7 +8,9 @@ namespace YAFF.Data.Extensions
     {
         public static IQueryable<Post> IncludeAuthor(this IQueryable<Post> posts)
         {
-            return posts.Include(p => p.Author).ThenInclude(u => u.Avatar);
+            return posts.Include(p => p.Author)
+                .ThenInclude(u => u.Profile)
+                .ThenInclude(p => p.Avatar);
         }
 
         public static IQueryable<Post> IncludeLikes(this IQueryable<Post> posts)
@@ -23,7 +25,14 @@ namespace YAFF.Data.Extensions
 
         public static IQueryable<Comment> IncludeAuthor(this IQueryable<Comment> comments)
         {
-            return comments.Include(c => c.Author).ThenInclude(u => u.Avatar);
+            return comments.Include(c => c.Author)
+                .ThenInclude(u => u.Profile)
+                .ThenInclude(p => p.Avatar);
+        }
+
+        public static IQueryable<UserProfile> IncludeUser(this IQueryable<UserProfile> profiles)
+        {
+            return profiles.Include(p => p.User).Include(p => p.Avatar);
         }
 
         public static IQueryable<T> Paginate<T>(this IQueryable<T> entities, int page, int pageSize)

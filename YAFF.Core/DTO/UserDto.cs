@@ -6,7 +6,6 @@ namespace YAFF.Core.DTO
     {
         public int Id { get; init; }
         public string UserName { get; init; }
-        public DateTime RegistrationDate { get; init; }
         public string Email { get; init; }
         public bool EmailConfirmed { get; init; }
         public bool IsBanned { get; init; }

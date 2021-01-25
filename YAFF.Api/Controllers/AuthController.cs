@@ -1,11 +1,11 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO.Auth;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Auth;
+using YAFF.Business.Commands.Profiles;
 
 namespace YAFF.Api.Controllers
 {
@@ -15,11 +15,14 @@ namespace YAFF.Api.Controllers
         {
         }
 
-        [HttpGet]
-        public IActionResult Index()
+        [HttpPost]
+        public async Task<IActionResult> Index()
         {
-            var username = HttpContext.User.Claims.SingleOrDefault(c => c.Type == "UserName");
-            return Ok($"You are authorised as {username!.Value}");
+            await Mediator.Send(new UpdateLastLoginDateCommand
+            {
+                UserId = CurrentUserId!.Value
+            });
+            return Ok();
         }
 
         [AllowAnonymous]

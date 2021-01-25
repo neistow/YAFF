@@ -65,7 +65,7 @@ namespace YAFF.Api.Controllers
             {
                 Title = post.Title,
                 Body = post.Body,
-                AuthorId = CurrentUserId,
+                AuthorId = CurrentUserId!.Value,
                 Tags = post.Tags
             });
 
@@ -84,7 +84,7 @@ namespace YAFF.Api.Controllers
                 Title = post.Title,
                 Body = post.Body,
                 Tags = post.Tags,
-                EditorId = CurrentUserId
+                EditorId = CurrentUserId!.Value
             });
 
             return !result.Succeeded
@@ -98,7 +98,7 @@ namespace YAFF.Api.Controllers
             var result = await Mediator.Send(new DeletePostCommand
             {
                 PostId = id,
-                UserId = CurrentUserId
+                UserId = CurrentUserId!.Value
             });
 
             return !result.Succeeded
@@ -112,7 +112,7 @@ namespace YAFF.Api.Controllers
             var result = await Mediator.Send(new AddLikeToPostRequest
             {
                 PostId = postId,
-                UserId = CurrentUserId
+                UserId = CurrentUserId!.Value
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError())
@@ -125,7 +125,7 @@ namespace YAFF.Api.Controllers
             var result = await Mediator.Send(new RemoveLikeFromPostRequest
             {
                 PostId = postId,
-                UserId = CurrentUserId
+                UserId = CurrentUserId!.Value
             });
             return !result.Succeeded
                 ? BadRequest(result.ToApiError())

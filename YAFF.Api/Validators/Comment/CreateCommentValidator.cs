@@ -8,7 +8,7 @@ namespace YAFF.Api.Validators.Comment
         public CreateCommentValidator()
         {
             RuleFor(pc => pc.PostId).NotEmpty().GreaterThan(0);
-            RuleFor(pc => pc.Body).NotEmpty().MaximumLength(1000);
+            RuleFor(pc => pc.Body).NotEmpty().MaximumLength(1024);
         }
     }
 }

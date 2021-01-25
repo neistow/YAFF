@@ -4,8 +4,6 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +11,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Auth;
-using YAFF.Core.Entities.Identity;
 using YAFF.Core.Mapper;
-using YAFF.Data;
 using YAFF.Data.Extensions;
 
 namespace YAFF.Api
@@ -45,8 +41,13 @@ namespace YAFF.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureSwagger();
+            
             services.ConfigureDbContext(Configuration);
-
+            
+            services.ConfigureAspNetIdentity();
+            services.AddJwtBearerAuthentication(Configuration);
+            
             services.BuildCors();
 
             services.AddControllers()
@@ -56,14 +57,6 @@ namespace YAFF.Api
                     o.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     o.ValidatorOptions.LanguageManager.Enabled = false;
                 });
-
-            services.ConfigureSwagger();
-
-            services.AddJwtBearerAuthentication(Configuration);
-
-            services.AddIdentityCore<User>(o => { o.User.RequireUniqueEmail = true; })
-                .AddEntityFrameworkStores<ForumDbContext>()
-                .AddSignInManager<SignInManager<User>>();
             
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
             services.AddMediatR(typeof(Startup).Assembly, typeof(RegisterUserCommandHandler).Assembly);
@@ -104,10 +97,7 @@ namespace YAFF.Api
             app.UseAuthorization();
             app.UseLockoutMiddleware();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

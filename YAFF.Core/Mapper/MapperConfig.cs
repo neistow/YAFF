@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
@@ -13,10 +12,16 @@ namespace YAFF.Core.Mapper
         {
             CreateMap<User, UserDto>()
                 .ForMember(u => u.Avatar,
-                    o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
+                    o => o.MapFrom(u => $"files/pictures/{u.Profile.Avatar.FileName}"));
             CreateMap<User, AuthorDto>()
                 .ForMember(a => a.Avatar,
+                    o => o.MapFrom(u => $"files/pictures/{u.Profile.Avatar.FileName}"));
+            CreateMap<UserProfile, UserProfileDto>()
+                .ForMember(u => u.UserName,
+                    o => o.MapFrom(u => u.User.UserName))
+                .ForMember(u => u.Avatar,
                     o => o.MapFrom(u => $"files/pictures/{u.Avatar.FileName}"));
+
 
             CreateMap<Tag, TagDto>()
                 .ForMember(t => t.Id,

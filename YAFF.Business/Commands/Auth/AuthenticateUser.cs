@@ -1,11 +1,14 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities.Identity;
+using YAFF.Data;
 
 namespace YAFF.Business.Commands.Auth
 {
@@ -17,14 +20,17 @@ namespace YAFF.Business.Commands.Auth
 
     public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand, Result<UserAuthenticatedDto>>
     {
+        private readonly ForumDbContext _forumDbContext;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public AuthenticateUserCommandHandler(UserManager<User> userManager, SignInManager<User> signInManager,
+        public AuthenticateUserCommandHandler(ForumDbContext forumDbContext, UserManager<User> userManager,
+            SignInManager<User> signInManager,
             IMediator mediator, IMapper mapper)
         {
+            _forumDbContext = forumDbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _mediator = mediator;
@@ -54,6 +60,11 @@ namespace YAFF.Business.Commands.Auth
             }
 
             var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand {User = user});
+
+            var userProfile = await _forumDbContext.Profiles
+                .SingleAsync(up => up.UserId == user.Id);
+            userProfile.LastLoginDate = DateTime.UtcNow;
+            await _forumDbContext.SaveChangesAsync();
 
             return Result<UserAuthenticatedDto>.Success(new UserAuthenticatedDto
             {

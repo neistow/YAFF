@@ -4,10 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
+using YAFF.Core.Entities.Identity;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Posts
@@ -23,21 +25,25 @@ namespace YAFF.Business.Commands.Posts
     public class CreatePostRequestHandler : IRequestHandler<CreatePostRequest, Result<PostDto>>
     {
         private readonly ForumDbContext _forumDbContext;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public CreatePostRequestHandler(ForumDbContext forumDbContext, IMapper mapper)
+        public CreatePostRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
+            _userManager = userManager;
             _mapper = mapper;
         }
 
         public async Task<Result<PostDto>> Handle(CreatePostRequest request, CancellationToken cancellationToken)
         {
+            var user = await _userManager.FindByIdAsync(request.AuthorId.ToString());
+
             var post = new Post
             {
                 Title = request.Title,
                 Body = request.Body,
-                AuthorId = request.AuthorId,
+                Author = user,
                 DateAdded = DateTime.UtcNow
             };
             await _forumDbContext.Posts.AddAsync(post);
