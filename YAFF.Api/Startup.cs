@@ -11,7 +11,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Auth;
+using YAFF.Business.Extensions;
 using YAFF.Core.Mapper;
+using YAFF.Core.Settings;
 using YAFF.Data.Extensions;
 
 namespace YAFF.Api
@@ -42,12 +44,12 @@ namespace YAFF.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureSwagger();
-            
+
             services.ConfigureDbContext(Configuration);
-            
+
             services.ConfigureAspNetIdentity();
             services.AddJwtBearerAuthentication(Configuration);
-            
+
             services.BuildCors();
 
             services.AddControllers()
@@ -57,9 +59,15 @@ namespace YAFF.Api
                     o.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     o.ValidatorOptions.LanguageManager.Enabled = false;
                 });
-            
+
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
             services.AddMediatR(typeof(Startup).Assembly, typeof(RegisterUserCommandHandler).Assembly);
+
+            services.Configure<PhotoProcessorSettings>(Configuration.GetSection("PhotoProcessorSettings"));
+            services.Configure<PhotoSettings>(Configuration.GetSection("PhotoSettings"));
+
+            services.AddPhotoStorage();
+            services.AddImageProcessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

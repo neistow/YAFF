@@ -15,11 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common" />
-      <Folder Include="Extensions" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\YAFF.Core\YAFF.Core.csproj" />
       <ProjectReference Include="..\YAFF.Data\YAFF.Data.csproj" />
     </ItemGroup>

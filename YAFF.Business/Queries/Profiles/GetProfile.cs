@@ -15,20 +15,18 @@ namespace YAFF.Business.Queries.Profiles
 {
     public class GetProfileQuery : IRequest<Result<UserProfileDto>>
     {
-        public int? UserId { get; set; }
-        public int ProfileId { get; set; }
+        public int? CurrentUserId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, Result<UserProfileDto>>
     {
         private readonly ForumDbContext _forumDbContext;
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public GetProfileQueryHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
+        public GetProfileQueryHandler(ForumDbContext forumDbContext, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
-            _userManager = userManager;
             _mapper = mapper;
         }
 
@@ -37,15 +35,15 @@ namespace YAFF.Business.Queries.Profiles
             var profile = await _forumDbContext.Profiles
                 .IncludeUser()
                 .AsNoTracking()
-                .SingleOrDefaultAsync(up => up.Id == request.ProfileId);
+                .SingleOrDefaultAsync(up => up.UserId == request.UserId);
             if (profile == null)
             {
-                return Result<UserProfileDto>.Failure(nameof(request.ProfileId), "Profile doesn't exist");
+                return Result<UserProfileDto>.Failure(string.Empty, "Profile doesn't exist");
             }
 
-            if (profile.ProfileType == UserProfileType.Private && request.UserId != profile.UserId)
+            if (profile.ProfileType == UserProfileType.Private && request.CurrentUserId != profile.UserId)
             {
-                return Result<UserProfileDto>.Failure(nameof(request.ProfileId), "This profile is private");
+                return Result<UserProfileDto>.Failure(nameof(profile.ProfileType), "This profile is private");
             }
 
             var result = _mapper.Map<UserProfileDto>(profile);

@@ -5,8 +5,6 @@ namespace YAFF.Core.DTO
 {
     public record UserProfileDto
     {
-        public int Id { get; init; }
-
         public string UserName { get; init; }
         public string UserStatus { get; init; }
         public string Bio { get; init; }
