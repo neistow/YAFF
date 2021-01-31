@@ -24,6 +24,10 @@ namespace YAFF.Api.Controllers
         {
             var result = await Mediator.Send(new GetPostsQuery
             {
+                IncludeTags = request.IncludeTags,
+                InclusionMode = request.InclusionMode,
+                ExcludeTags = request.ExcludeTags,
+                ExclusionMode = request.ExclusionMode,
                 Page = request.Page,
                 PageSize = request.PageSize
             });

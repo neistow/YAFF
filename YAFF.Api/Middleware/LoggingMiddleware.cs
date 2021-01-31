@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace YAFF.Api.Middleware
@@ -29,7 +30,7 @@ namespace YAFF.Api.Middleware
                 _logger.LogInformation(
                     "Request {method} {url} => {statusCode} handled in {timeElapsed}ms",
                     httpContext.Request.Method,
-                    httpContext.Request.Path.Value,
+                    httpContext.Request.GetDisplayUrl(),
                     httpContext.Response.StatusCode,
                     stopwatch.ElapsedMilliseconds);
             }

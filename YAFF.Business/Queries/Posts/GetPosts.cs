@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using YAFF.Business.Specifications;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Data;
@@ -15,6 +16,10 @@ namespace YAFF.Business.Queries.Posts
 {
     public class GetPostsQuery : IRequest<Result<PostListDto>>
     {
+        public IEnumerable<int> IncludeTags { get; init; }
+        public FilterMode InclusionMode { get; init; }
+        public IEnumerable<int> ExcludeTags { get; init; }
+        public FilterMode ExclusionMode { get; init; }
         public int Page { get; init; }
         public int PageSize { get; init; }
     }
@@ -32,15 +37,19 @@ namespace YAFF.Business.Queries.Posts
 
         public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
         {
+            var spec = new PostHasTagsSpecification(request.IncludeTags, request.InclusionMode,
+                request.ExcludeTags, request.ExclusionMode);
+
             var posts = await _forumDbContext.Posts
                 .IncludeLikes()
                 .IncludeAuthor()
                 .IncludeTags()
+                .Where(spec.Expression)
                 .OrderByDescending(p => p.DateAdded)
                 .Paginate(request.Page, request.PageSize)
                 .AsNoTracking()
                 .ToListAsync();
-            var allPostsCount = await _forumDbContext.Posts.CountAsync();
+            var allPostsCount = await _forumDbContext.Posts.Where(spec.Expression).CountAsync();
 
             var shortenedPosts = posts.Select(post =>
             {
