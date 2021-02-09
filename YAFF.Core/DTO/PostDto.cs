@@ -13,6 +13,7 @@ namespace YAFF.Core.DTO
         public DateTime? DateEdited { get; init; }
         public int LikesCount => PostLikes.Count();
 
+        public PostPreviewDto Preview { get; init; }
         public AuthorDto Author { get; init; }
 
         public IEnumerable<string> Tags { get; init; } = new List<string>();

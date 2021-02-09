@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Auth;
 using YAFF.Business.Extensions;
+using YAFF.Core.Entities.Identity;
 using YAFF.Core.Mapper;
 using YAFF.Core.Settings;
 using YAFF.Data.Extensions;
@@ -68,6 +70,7 @@ namespace YAFF.Api
 
             services.AddPhotoStorage();
             services.AddImageProcessor();
+            services.AddPhotoValidator();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

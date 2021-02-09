@@ -10,6 +10,7 @@ using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
 using YAFF.Core.Entities.Identity;
+using YAFF.Core.Interfaces;
 using YAFF.Data;
 
 namespace YAFF.Business.Commands.Posts
@@ -20,23 +21,37 @@ namespace YAFF.Business.Commands.Posts
         public string Body { get; set; }
         public int AuthorId { get; set; }
         public IEnumerable<string> Tags { get; set; }
+        public string PreviewBody { get; init; }
+        public IFile PreviewImage { get; init; }
     }
 
     public class CreatePostRequestHandler : IRequestHandler<CreatePostRequest, Result<PostDto>>
     {
         private readonly ForumDbContext _forumDbContext;
         private readonly UserManager<User> _userManager;
+        private readonly IPhotoValidator _photoValidator;
+        private readonly IPhotoStorage _photoStorage;
         private readonly IMapper _mapper;
 
-        public CreatePostRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager, IMapper mapper)
+        public CreatePostRequestHandler(ForumDbContext forumDbContext, UserManager<User> userManager,
+            IPhotoValidator photoValidator, IPhotoStorage photoStorage, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
             _userManager = userManager;
+            _photoValidator = photoValidator;
+            _photoStorage = photoStorage;
             _mapper = mapper;
         }
 
         public async Task<Result<PostDto>> Handle(CreatePostRequest request, CancellationToken cancellationToken)
         {
+            var validationResult = _photoValidator.ValidatePhoto(request.PreviewImage);
+            if (!validationResult.Succeeded)
+            {
+                return Result<PostDto>.Failure(validationResult.Field, validationResult.Message);
+            }
+
+            var fileName = await _photoStorage.StorePhotoAsync(request.PreviewImage);
             var user = await _userManager.FindByIdAsync(request.AuthorId.ToString());
 
             var post = new Post
@@ -44,7 +59,12 @@ namespace YAFF.Business.Commands.Posts
                 Title = request.Title,
                 Body = request.Body,
                 Author = user,
-                DateAdded = DateTime.UtcNow
+                DateAdded = DateTime.UtcNow,
+                Preview = new PostPreview
+                {
+                    Body = request.PreviewBody,
+                    Image = new Photo {FileName = fileName}
+                }
             };
             await _forumDbContext.Posts.AddAsync(post);
 

@@ -32,6 +32,7 @@ namespace YAFF.Business.Queries.Posts
                 .IncludeAuthor()
                 .IncludeLikes()
                 .IncludeTags()
+                .IncludePreview()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(p => p.Id == request.Id);
             if (post == null)

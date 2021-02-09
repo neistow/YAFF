@@ -15,5 +15,10 @@ namespace YAFF.Business.Extensions
         {
             services.AddScoped<IImageProcessor, ImageProcessor>();
         }
+
+        public static void AddPhotoValidator(this IServiceCollection services)
+        {
+            services.AddScoped<IPhotoValidator, PhotoValidator>();
+        }
     }
 }

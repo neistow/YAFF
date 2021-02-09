@@ -18,6 +18,7 @@ namespace YAFF.Business.Commands.Auth
     public class GenerateJwtTokenCommand : IRequest<string>
     {
         public User User { get; init; }
+        public IList<string> Roles { get; init; }
     }
 
     public class GenerateJwtTokenCommandHandler : IRequestHandler<GenerateJwtTokenCommand, string>
@@ -37,6 +38,7 @@ namespace YAFF.Business.Commands.Auth
                 new Claim("UserName", request.User.UserName),
                 new Claim("Email", request.User.Email)
             };
+            claims.Add(new Claim("Roles", string.Join(",", request.Roles)));
 
             var credentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenConfig.Secret)),

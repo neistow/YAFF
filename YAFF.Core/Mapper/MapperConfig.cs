@@ -28,7 +28,17 @@ namespace YAFF.Core.Mapper
                     o => o.MapFrom(t => t.Id));
             CreateMap<Post, PostListItemDto>()
                 .ForMember(p => p.Author,
-                    o => o.MapFrom(p => p.Author));
+                    o => o.MapFrom(p => p.Author))
+                .ForMember(p => p.Summary,
+                    o => o.MapFrom(p => p.Preview.Body))
+                .ForMember(p => p.PreviewImage,
+                    o => o.MapFrom(p => $"files/pictures/{p.Preview.Image.FileName}"))
+                .ForMember(p => p.Tags,
+                    o => o.MapFrom(p => p.PostTags.Select(pt => pt.Tag.Name)));
+
+            CreateMap<PostPreview, PostPreviewDto>()
+                .ForMember(p => p.Image,
+                    o => o.MapFrom(p => $"files/pictures/{p.Image.FileName}"));
 
             CreateMap<Post, PostDto>()
                 .ForMember(p => p.Author,
@@ -36,7 +46,9 @@ namespace YAFF.Core.Mapper
                 .ForMember(p => p.Tags,
                     o => o.MapFrom(p => p.PostTags.Select(t => t.Tag.Name)))
                 .ForMember(p => p.PostLikes,
-                    o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)));
+                    o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)))
+                .ForMember(p => p.Preview,
+                    o => o.MapFrom(p => p.Preview));
 
             CreateMap<Comment, CommentDto>();
         }

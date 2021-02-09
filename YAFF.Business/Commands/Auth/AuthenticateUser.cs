@@ -59,7 +59,8 @@ namespace YAFF.Business.Commands.Auth
                     $"You are banned. Ban expiration date: {user.BanLiftDate}");
             }
 
-            var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand {User = user});
+            var roles = await _userManager.GetRolesAsync(user);
+            var jwtToken = await _mediator.Send(new GenerateJwtTokenCommand {User = user, Roles = roles});
 
             var userProfile = await _forumDbContext.Profiles
                 .SingleAsync(up => up.UserId == user.Id);

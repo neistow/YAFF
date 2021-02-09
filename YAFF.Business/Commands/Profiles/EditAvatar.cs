@@ -27,17 +27,17 @@ namespace YAFF.Business.Commands.Profiles
         private readonly ForumDbContext _forumDbContext;
         private readonly IPhotoStorage _photoStorage;
         private readonly IImageProcessor _imageProcessor;
+        private readonly IPhotoValidator _photoValidator;
 
-        private readonly PhotoSettings _photoSettings;
         private readonly IMapper _mapper;
 
         public EditAvatarCommandHandler(ForumDbContext forumDbContext, IPhotoStorage photoStorage,
-            IImageProcessor imageProcessor, IOptions<PhotoSettings> photoSettings, IMapper mapper)
+            IImageProcessor imageProcessor, IPhotoValidator photoValidator, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
             _photoStorage = photoStorage;
             _imageProcessor = imageProcessor;
-            _photoSettings = photoSettings.Value;
+            _photoValidator = photoValidator;
             _mapper = mapper;
         }
 
@@ -47,12 +47,12 @@ namespace YAFF.Business.Commands.Profiles
                 .IncludeUser()
                 .SingleAsync(p => p.UserId == request.UserId);
 
-            var validationResult = ValidatePhoto(request.Avatar);
+            var validationResult = _photoValidator.ValidatePhoto(request.Avatar);
             if (!validationResult.Succeeded)
             {
                 return Result<UserProfileDto>.Failure(validationResult.Field, validationResult.Message);
             }
-            
+
             var oldAvatar = profile.Avatar;
             if (oldAvatar != null)
             {
@@ -70,22 +70,6 @@ namespace YAFF.Business.Commands.Profiles
 
             var result = _mapper.Map<UserProfileDto>(profile);
             return Result<UserProfileDto>.Success(result);
-        }
-
-        private Result<object> ValidatePhoto(IFile photo)
-        {
-            if (photo.Length > _photoSettings.MaxBytes || photo.Length <= 0)
-            {
-                return Result<object>.Failure(nameof(photo.Length),
-                    $"Photo size should be greater than 0 and less than {_photoSettings.MaxBytes / 1024 / 1024} MB");
-            }
-
-            if (!_photoSettings.HasSupportedExtension(photo.FileName))
-            {
-                return Result<object>.Failure(nameof(photo.FileName), "Unsupported file extension!");
-            }
-
-            return Result<object>.Success();
         }
     }
 }

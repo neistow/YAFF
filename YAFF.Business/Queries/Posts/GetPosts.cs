@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using YAFF.Business.Specifications;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
+using YAFF.Core.Entities;
 using YAFF.Data;
 using YAFF.Data.Extensions;
 
@@ -44,6 +45,7 @@ namespace YAFF.Business.Queries.Posts
                 .IncludeLikes()
                 .IncludeAuthor()
                 .IncludeTags()
+                .IncludePreview()
                 .Where(spec.Expression)
                 .OrderByDescending(p => p.DateAdded)
                 .Paginate(request.Page, request.PageSize)
@@ -51,18 +53,12 @@ namespace YAFF.Business.Queries.Posts
                 .ToListAsync();
             var allPostsCount = await _forumDbContext.Posts.Where(spec.Expression).CountAsync();
 
-            var shortenedPosts = posts.Select(post =>
-            {
-                post.Body = $"{string.Join(" ", post.Body.Split().Take(40))}...";
-                return post;
-            });
-
-            if (!shortenedPosts.Any())
+            if (!posts.Any())
             {
                 return Result<PostListDto>.Failure(nameof(request.Page), "No records found");
             }
 
-            var postDtos = _mapper.Map<IEnumerable<PostListItemDto>>(shortenedPosts);
+            var postDtos = _mapper.Map<IEnumerable<PostListItemDto>>(posts);
             return Result<PostListDto>.Success(new PostListDto
             {
                 Posts = postDtos,

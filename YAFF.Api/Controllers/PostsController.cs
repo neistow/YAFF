@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YAFF.Api.Common;
 using YAFF.Api.DTO;
 using YAFF.Api.DTO.Post;
 using YAFF.Api.Extensions;
@@ -63,14 +64,16 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost([FromBody] PostDto post)
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPost)
         {
             var result = await Mediator.Send(new CreatePostRequest
             {
-                Title = post.Title,
-                Body = post.Body,
+                Title = createPost.Title,
+                Body = createPost.Body,
                 AuthorId = CurrentUserId!.Value,
-                Tags = post.Tags
+                Tags = createPost.Tags,
+                PreviewBody = createPost.PreviewBody,
+                PreviewImage = new FileAdapter(createPost.PreviewImage)
             });
 
             return !result.Succeeded
@@ -78,17 +81,18 @@ namespace YAFF.Api.Controllers
                 : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse());
         }
 
-
-        [HttpPut("{id:min(1)}")]
-        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostDto post)
+        [HttpPut]
+        public async Task<IActionResult> EditPost([FromForm] EditPostDto editPost)
         {
             var result = await Mediator.Send(new EditPostCommand
             {
-                PostId = id,
-                Title = post.Title,
-                Body = post.Body,
-                Tags = post.Tags,
-                EditorId = CurrentUserId!.Value
+                Id = editPost.Id,
+                Title = editPost.Title,
+                Body = editPost.Body,
+                Tags = editPost.Tags,
+                EditorId = CurrentUserId!.Value,
+                PreviewBody = editPost.PreviewBody,
+                PreviewImage = editPost.PreviewImage == null ? null : new FileAdapter(editPost.PreviewImage)
             });
 
             return !result.Succeeded

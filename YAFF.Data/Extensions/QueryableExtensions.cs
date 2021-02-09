@@ -44,6 +44,16 @@ namespace YAFF.Data.Extensions
         }
 
         /// <summary>
+        /// Includes Preview of the post with photo
+        /// </summary>
+        /// <param name="posts"></param>
+        /// <returns></returns>
+        public static IQueryable<Post> IncludePreview(this IQueryable<Post> posts)
+        {
+            return posts.Include(p => p.Preview).ThenInclude(pp => pp.Image);
+        }
+
+        /// <summary>
         /// Includes Author with profile and avatar
         /// </summary>
         /// <param name="comments"></param>

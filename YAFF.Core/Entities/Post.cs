@@ -14,8 +14,10 @@ namespace YAFF.Core.Entities
         public DateTime? DateEdited { get; set; }
         public int LikesCount => PostLikes.Count();
 
-        public int AuthorId { get; set; }
         public User Author { get; set; }
+        public int AuthorId { get; set; }
+
+        public PostPreview Preview { get; set; }
 
         public ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
         public IEnumerable<PostLike> PostLikes { get; set; } = new List<PostLike>();
