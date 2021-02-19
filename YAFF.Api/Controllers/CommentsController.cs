@@ -29,7 +29,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
-        public async Task<IActionResult> EditComment([FromRoute] int id, [FromBody] UpdateCommentDto request)
+        public async Task<IActionResult> UpdateComment([FromRoute] int id, [FromBody] UpdateCommentDto request)
         {
             var result = await Mediator.Send(new EditCommentRequest
             {

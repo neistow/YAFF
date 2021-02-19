@@ -5,14 +5,18 @@ using YAFF.Api.DTO.Post;
 
 namespace YAFF.Api.Validators.Post
 {
-    public class CreatePostValidator : AbstractValidator<CreatePostDto>
+    public class PostValidator : AbstractValidator<PostDto>
     {
-        public CreatePostValidator()
+        public PostValidator()
         {
             RuleFor(p => p.Title).NotEmpty().MinimumLength(5).MaximumLength(256);
             RuleFor(p => p.Body).NotEmpty().MinimumLength(256);
-            When(p => p.Tags != null,
-                () => { RuleFor(p => p.Tags).Must(BeUnique).WithMessage("Tags must be unique"); });
+
+            RuleFor(p => p.Tags).Must(ContainValidValues)
+                .WithMessage("Null values or empty strings are not valid tags");
+            RuleFor(p => p.Tags).Must(BeUnique).Unless(p => !ContainValidValues(p.Tags))
+                .WithMessage("No duplicate tags allowed");
+
             RuleFor(p => p.PreviewBody).NotEmpty().MinimumLength(100).MaximumLength(256);
             RuleFor(p => p.PreviewImage).NotNull().WithMessage("Post must have a preview image");
         }
@@ -21,6 +25,11 @@ namespace YAFF.Api.Validators.Post
         {
             var distinctTags = tags.Select(t => t.ToLowerInvariant()).Distinct().ToList();
             return distinctTags.Count == tags.Count;
+        }
+
+        private bool ContainValidValues(List<string> tags)
+        {
+            return tags.TrueForAll(t => !string.IsNullOrWhiteSpace(t));
         }
     }
 }

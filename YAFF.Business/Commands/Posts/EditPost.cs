@@ -14,7 +14,7 @@ using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Commands.Posts
 {
-    public class EditPostCommand : IRequest<Result<PostDto>>
+    public class UpdatePostCommand : IRequest<Result<PostDto>>
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -27,23 +27,25 @@ namespace YAFF.Business.Commands.Posts
         public IFile PreviewImage { get; init; }
     }
 
-    public class EditPostCommandHandler : IRequestHandler<EditPostCommand, Result<PostDto>>
+    public class EditPostCommandHandler : IRequestHandler<UpdatePostCommand, Result<PostDto>>
     {
         private readonly ForumDbContext _forumDbContext;
         private readonly IPhotoValidator _photoValidator;
         private readonly IPhotoStorage _photoStorage;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public EditPostCommandHandler(ForumDbContext forumDbContext, IPhotoValidator photoValidator,
-            IPhotoStorage photoStorage, IMapper mapper)
+            IPhotoStorage photoStorage, IMediator mediator, IMapper mapper)
         {
             _forumDbContext = forumDbContext;
             _photoValidator = photoValidator;
             _photoStorage = photoStorage;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
-        public async Task<Result<PostDto>> Handle(EditPostCommand request, CancellationToken cancellationToken)
+        public async Task<Result<PostDto>> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
             var post = await _forumDbContext.Posts
                 .IncludeTags()
@@ -77,24 +79,7 @@ namespace YAFF.Business.Commands.Posts
                 };
             }
 
-            _forumDbContext.PostTags.RemoveRange(post.PostTags);
-
-            foreach (var tagName in request.Tags)
-            {
-                var tagInDb = await _forumDbContext.Tags
-                    .SingleOrDefaultAsync(t => t.Name == tagName.ToLowerInvariant());
-                if (tagInDb != null)
-                {
-                    post.PostTags.Add(new PostTag {TagId = tagInDb.Id});
-                }
-                else
-                {
-                    var tag = new Tag {Name = tagName.ToLowerInvariant()};
-                    await _forumDbContext.Tags.AddAsync(tag);
-
-                    post.PostTags.Add(new PostTag {Tag = tag});
-                }
-            }
+            await _mediator.Send(new UpdatePostTagsCommand {Post = post, Tags = request.Tags});
 
             await _forumDbContext.SaveChangesAsync();
 
