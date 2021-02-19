@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace YAFF.Api.DTO.Post
 {
-    public record CreatePostDto
+    public record PostDto
     {
         public string Title { get; init; }
         public string Body { get; init; }

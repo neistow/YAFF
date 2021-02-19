@@ -64,16 +64,16 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPost)
+        public async Task<IActionResult> CreatePost([FromForm] PostDto dto)
         {
             var result = await Mediator.Send(new CreatePostRequest
             {
-                Title = createPost.Title,
-                Body = createPost.Body,
+                Title = dto.Title,
+                Body = dto.Body,
                 AuthorId = CurrentUserId!.Value,
-                Tags = createPost.Tags,
-                PreviewBody = createPost.PreviewBody,
-                PreviewImage = new FileAdapter(createPost.PreviewImage)
+                Tags = dto.Tags,
+                PreviewBody = dto.PreviewBody,
+                PreviewImage = new FileAdapter(dto.PreviewImage)
             });
 
             return !result.Succeeded
@@ -81,18 +81,18 @@ namespace YAFF.Api.Controllers
                 : CreatedAtAction(nameof(GetPost), new {id = result.Data.Id}, result.ToApiResponse());
         }
 
-        [HttpPut]
-        public async Task<IActionResult> EditPost([FromForm] EditPostDto editPost)
+        [HttpPut("{id:min(1)}")]
+        public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromForm] PostDto dto)
         {
-            var result = await Mediator.Send(new EditPostCommand
+            var result = await Mediator.Send(new UpdatePostCommand
             {
-                Id = editPost.Id,
-                Title = editPost.Title,
-                Body = editPost.Body,
-                Tags = editPost.Tags,
+                Id = id,
+                Title = dto.Title,
+                Body = dto.Body,
+                Tags = dto.Tags,
                 EditorId = CurrentUserId!.Value,
-                PreviewBody = editPost.PreviewBody,
-                PreviewImage = editPost.PreviewImage == null ? null : new FileAdapter(editPost.PreviewImage)
+                PreviewBody = dto.PreviewBody,
+                PreviewImage = dto.PreviewImage == null ? null : new FileAdapter(dto.PreviewImage)
             });
 
             return !result.Succeeded
@@ -114,7 +114,7 @@ namespace YAFF.Api.Controllers
                 : Ok();
         }
 
-        [HttpPost("{postId:min(1)}/addLike")]
+        [HttpPost("{postId:min(1)}")]
         public async Task<IActionResult> AddLikeToPost([FromRoute] int postId)
         {
             var result = await Mediator.Send(new AddLikeToPostRequest
@@ -127,7 +127,7 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse());
         }
 
-        [HttpPost("{postId:min(1)}/removeLike")]
+        [HttpDelete("{postId:min(1)}")]
         public async Task<IActionResult> RemoveLikeFromPost([FromRoute] int postId)
         {
             var result = await Mediator.Send(new RemoveLikeFromPostRequest

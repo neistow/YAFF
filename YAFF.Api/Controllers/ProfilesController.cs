@@ -33,7 +33,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditProfile(EditProfileDto profileDto)
+        public async Task<IActionResult> UpdateProfile(EditProfileDto profileDto)
         {
             var result = await Mediator.Send(new EditProfileCommand
             {
@@ -47,8 +47,8 @@ namespace YAFF.Api.Controllers
                 : BadRequest(result.ToApiError());
         }
 
-        [HttpPost("avatar")]
-        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile avatar)
+        [HttpPut("avatar")]
+        public async Task<IActionResult> UpdateAvatar([FromForm] IFormFile avatar)
         {
             var result = await Mediator.Send(new EditAvatarCommand
             {

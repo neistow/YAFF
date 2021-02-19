@@ -5,20 +5,20 @@ using YAFF.Api.DTO.Post;
 
 namespace YAFF.Api.Validators.Post
 {
-    public class EditPostValidator : AbstractValidator<EditPostDto>
+    public class PostValidator : AbstractValidator<PostDto>
     {
-        public EditPostValidator()
+        public PostValidator()
         {
-            CascadeMode = CascadeMode.Stop;
-            
-            RuleFor(p => p.Id).GreaterThan(0);
             RuleFor(p => p.Title).NotEmpty().MinimumLength(5).MaximumLength(256);
             RuleFor(p => p.Body).NotEmpty().MinimumLength(256);
-            
-            RuleFor(p => p.Tags).Must(ContainValidValues).WithMessage("Null values or empty strings are not valid tags");
-            RuleFor(p => p.Tags).Must(BeUnique).WithMessage("No duplicate tags allowed");
+
+            RuleFor(p => p.Tags).Must(ContainValidValues)
+                .WithMessage("Null values or empty strings are not valid tags");
+            RuleFor(p => p.Tags).Must(BeUnique).Unless(p => !ContainValidValues(p.Tags))
+                .WithMessage("No duplicate tags allowed");
 
             RuleFor(p => p.PreviewBody).NotEmpty().MinimumLength(100).MaximumLength(256);
+            RuleFor(p => p.PreviewImage).NotNull().WithMessage("Post must have a preview image");
         }
 
         private bool BeUnique(List<string> tags)
