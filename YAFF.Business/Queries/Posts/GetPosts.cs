@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using YAFF.Business.Specifications;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using YAFF.Core.Entities;
+using YAFF.Core.Extensions;
 using YAFF.Data;
 using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Queries.Posts
 {
-    public class GetPostsQuery : IRequest<Result<PostListDto>>
+    public class GetPostsQuery : IRequest<Result<PagedList<PostListItemDto>>>
     {
         public IEnumerable<int> IncludeTags { get; init; }
         public FilterMode InclusionMode { get; init; }
@@ -25,7 +25,7 @@ namespace YAFF.Business.Queries.Posts
         public int PageSize { get; init; }
     }
 
-    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<PostListDto>>
+    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<PagedList<PostListItemDto>>>
     {
         private readonly ForumDbContext _forumDbContext;
         private readonly IMapper _mapper;
@@ -36,7 +36,8 @@ namespace YAFF.Business.Queries.Posts
             _mapper = mapper;
         }
 
-        public async Task<Result<PostListDto>> Handle(GetPostsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<PostListItemDto>>> Handle(GetPostsQuery request,
+            CancellationToken cancellationToken)
         {
             var spec = new PostHasTagsSpecification(request.IncludeTags, request.InclusionMode,
                 request.ExcludeTags, request.ExclusionMode);
@@ -55,17 +56,16 @@ namespace YAFF.Business.Queries.Posts
 
             if (!posts.Any())
             {
-                return Result<PostListDto>.Failure(nameof(request.Page), "No records found");
+                return Result<PagedList<PostListItemDto>>.Failure(nameof(request.Page), "No records found");
             }
 
             var postDtos = _mapper.Map<IEnumerable<PostListItemDto>>(posts);
-            return Result<PostListDto>.Success(new PostListDto
-            {
-                Posts = postDtos,
-                Page = request.Page,
-                PageSize = request.PageSize,
-                TotalPages = (int) Math.Ceiling(allPostsCount / (double) request.PageSize)
-            });
+
+            return Result<PagedList<PostListItemDto>>.Success(
+                postDtos.ToPagedList(
+                    request.Page,
+                    request.PageSize,
+                    (int) Math.Ceiling(allPostsCount / (double) request.PageSize)));
         }
     }
 }

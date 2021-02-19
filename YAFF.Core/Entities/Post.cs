@@ -12,7 +12,7 @@ namespace YAFF.Core.Entities
         public string Body { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime? DateEdited { get; set; }
-        public int LikesCount => PostLikes.Count();
+        public int LikesCount => PostLikes.Count;
 
         public User Author { get; set; }
         public int AuthorId { get; set; }
@@ -20,7 +20,7 @@ namespace YAFF.Core.Entities
         public PostPreview Preview { get; set; }
 
         public ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
-        public IEnumerable<PostLike> PostLikes { get; set; } = new List<PostLike>();
-        public IEnumerable<Comment> PostComments { get; set; } = new List<Comment>();
+        public ICollection<PostLike> PostLikes { get; set; } = new List<PostLike>();
+        public ICollection<Comment> PostComments { get; set; } = new List<Comment>();
     }
 }

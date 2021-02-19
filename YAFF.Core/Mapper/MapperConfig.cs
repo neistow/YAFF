@@ -45,8 +45,7 @@ namespace YAFF.Core.Mapper
                     o => o.MapFrom(p => p.Author))
                 .ForMember(p => p.Tags,
                     o => o.MapFrom(p => p.PostTags.Select(t => t.Tag.Name)))
-                .ForMember(p => p.PostLikes,
-                    o => o.MapFrom(p => p.PostLikes.Select(l => l.UserId)))
+                .ForMember(p => p.LikesCount,o => o.MapFrom(p => p.PostLikes.Count()))
                 .ForMember(p => p.Preview,
                     o => o.MapFrom(p => p.Preview));
 

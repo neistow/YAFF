@@ -8,19 +8,20 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
+using YAFF.Core.Extensions;
 using YAFF.Data;
 using YAFF.Data.Extensions;
 
 namespace YAFF.Business.Queries.Comments
 {
-    public class GetCommentsOfPostQuery : IRequest<Result<CommentListDto>>
+    public class GetCommentsOfPostQuery : IRequest<Result<PagedList<CommentDto>>>
     {
         public int PostId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
     }
 
-    public class GetCommentsOfPostQueryHandler : IRequestHandler<GetCommentsOfPostQuery, Result<CommentListDto>>
+    public class GetCommentsOfPostQueryHandler : IRequestHandler<GetCommentsOfPostQuery, Result<PagedList<CommentDto>>>
     {
         private readonly ForumDbContext _forumDbContext;
         private readonly IMapper _mapper;
@@ -31,13 +32,13 @@ namespace YAFF.Business.Queries.Comments
             _mapper = mapper;
         }
 
-        public async Task<Result<CommentListDto>> Handle(GetCommentsOfPostQuery query,
+        public async Task<Result<PagedList<CommentDto>>> Handle(GetCommentsOfPostQuery query,
             CancellationToken cancellationToken)
         {
             var post = await _forumDbContext.Posts.FindAsync(query.PostId);
             if (post == null)
             {
-                return Result<CommentListDto>.Failure(nameof(query.PostId), "Post doesn't exist.");
+                return Result<PagedList<CommentDto>>.Failure(nameof(query.PostId), "Post doesn't exist.");
             }
 
             var comments = await _forumDbContext.Comments
@@ -53,17 +54,15 @@ namespace YAFF.Business.Queries.Comments
 
             if (!comments.Any())
             {
-                return Result<CommentListDto>.Failure(nameof(query.Page), "No comments found");
+                return Result<PagedList<CommentDto>>.Failure(nameof(query.Page), "No comments found");
             }
 
             var result = _mapper.Map<IEnumerable<CommentDto>>(comments);
-            return Result<CommentListDto>.Success(new CommentListDto
-            {
-                Comments = result,
-                Page = query.Page,
-                PageSize = query.PageSize,
-                TotalPages = (int) Math.Ceiling(allCommentsCount / (double) query.PageSize)
-            });
+            return Result<PagedList<CommentDto>>.Success(
+                result.ToPagedList(
+                    query.Page,
+                    query.PageSize,
+                    (int) Math.Ceiling(allCommentsCount / (double) query.PageSize)));
         }
     }
 }
