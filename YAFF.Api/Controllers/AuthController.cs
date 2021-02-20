@@ -55,5 +55,20 @@ namespace YAFF.Api.Controllers
                 ? BadRequest(result.ToApiError())
                 : Ok(result.ToApiResponse());
         }
+
+        [AllowAnonymous]
+        [HttpPost("[action]/{userId:min(1)}/{token}")]
+        public async Task<IActionResult> ConfirmEmail([FromRoute] int userId, [FromRoute] string token)
+        {
+            var result = await Mediator.Send(new ConfirmEmailCommand
+            {
+                UserId = userId,
+                Token = token
+            });
+
+            return result.Succeeded
+                ? Ok(result.ToApiResponse())
+                : BadRequest(result.ToApiError());
+        }
     }
 }

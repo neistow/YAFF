@@ -20,5 +20,10 @@ namespace YAFF.Business.Extensions
         {
             services.AddScoped<IPhotoValidator, PhotoValidator>();
         }
+
+        public static void AddEmailSender(this IServiceCollection services)
+        {
+            services.AddTransient<IEmailSender, EmailSender>();
+        }
     }
 }

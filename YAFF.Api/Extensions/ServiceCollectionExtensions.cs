@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -77,9 +76,17 @@ namespace YAFF.Api.Extensions
 
         public static void ConfigureAspNetIdentity(this IServiceCollection services)
         {
-            services.AddIdentityCore<User>(o => { o.User.RequireUniqueEmail = true; })
+            services.AddIdentityCore<User>(o =>
+                {
+                    o.User.RequireUniqueEmail = true;
+                    o.SignIn = new SignInOptions
+                    {
+                        RequireConfirmedEmail = true
+                    };
+                })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<ForumDbContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider)
                 .AddSignInManager<SignInManager<User>>();
         }
     }

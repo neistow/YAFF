@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,6 +10,7 @@ using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using YAFF.Core.Entities;
 using YAFF.Core.Entities.Identity;
+using YAFF.Core.Interfaces;
 
 namespace YAFF.Business.Commands.Auth
 {
@@ -22,11 +24,13 @@ namespace YAFF.Business.Commands.Auth
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<UserDto>>
     {
         private readonly UserManager<User> _userManager;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
-        public RegisterUserCommandHandler(UserManager<User> userManager, IMapper mapper)
+        public RegisterUserCommandHandler(UserManager<User> userManager, IEmailSender emailSender, IMapper mapper)
         {
             _userManager = userManager;
+            _emailSender = emailSender;
             _mapper = mapper;
         }
 
@@ -47,6 +51,12 @@ namespace YAFF.Business.Commands.Auth
                 var error = result.Errors.First();
                 return Result<UserDto>.Failure("", error.Description);
             }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var tokenInBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+            await _emailSender.SendEmail(request.Email, "Email confirmation",
+                @$"Hello, your email confirmation code is: {tokenInBase64}");
 
             var dto = _mapper.Map<UserDto>(user);
             return Result<UserDto>.Success(dto);

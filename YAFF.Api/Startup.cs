@@ -67,10 +67,12 @@ namespace YAFF.Api
 
             services.Configure<PhotoProcessorSettings>(Configuration.GetSection("PhotoProcessorSettings"));
             services.Configure<PhotoSettings>(Configuration.GetSection("PhotoSettings"));
+            services.Configure<EmailSettings>(Configuration.GetSection("SmtpSettings"));
 
             services.AddPhotoStorage();
             services.AddImageProcessor();
             services.AddPhotoValidator();
+            services.AddEmailSender();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
