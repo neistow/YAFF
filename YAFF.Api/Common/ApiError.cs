@@ -1,14 +1,17 @@
-﻿namespace YAFF.Api.Common
+﻿using System.Collections.Generic;
+
+namespace YAFF.Api.Common
 {
     public class ApiError
     {
-        public string Field { get; }
-        public string Message { get; }
+        public IDictionary<string, IEnumerable<string>> Errors { get; }
 
-        public ApiError(string field, string message)
+        public ApiError(string field, string error)
         {
-            Field = field;
-            Message = message;
+            Errors = new Dictionary<string, IEnumerable<string>>
+            {
+                {field, new[] {error}}
+            };
         }
     }
 }
