@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,7 @@ using YAFF.Api.DTO.Profile;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Profiles;
 using YAFF.Business.Queries.Profiles;
+using YAFF.Core.DTO;
 
 namespace YAFF.Api.Controllers
 {
@@ -19,6 +21,8 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("{userId:min(1)}")]
+        [ProducesResponseType(typeof(UserProfileDto),200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> GetUsersProfile(int userId)
         {
             var result = await Mediator.Send(new GetProfileQuery
@@ -33,6 +37,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(typeof(UserProfileDto),200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> UpdateProfile(EditProfileDto profileDto)
         {
             var result = await Mediator.Send(new EditProfileCommand
@@ -48,6 +54,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut("avatar")]
+        [ProducesResponseType(typeof(UserProfileDto),200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> UpdateAvatar([FromForm] IFormFile avatar)
         {
             var result = await Mediator.Send(new EditAvatarCommand
@@ -62,6 +70,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpDelete("avatar")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> DeleteAvatar()
         {
             var result = await Mediator.Send(new DeleteAvatarCommand

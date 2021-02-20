@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,8 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 404)]
         public async Task<IActionResult> GetTags([FromQuery] PaginationDto request)
         {
             var result = await Mediator.Send(new GetTagsRequest

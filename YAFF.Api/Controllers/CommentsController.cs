@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using YAFF.Api.DTO.Comment;
 using YAFF.Api.Extensions;
 using YAFF.Business.Commands.Comments;
+using YAFF.Core.DTO;
 
 namespace YAFF.Api.Controllers
 {
@@ -14,6 +16,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CommentDto),200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> AddComment([FromBody] CreateCommentDto request)
         {
             var result = await Mediator.Send(new AddCommentRequest
@@ -29,6 +33,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
+        [ProducesResponseType(typeof(CommentDto),200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> UpdateComment([FromRoute] int id, [FromBody] UpdateCommentDto request)
         {
             var result = await Mediator.Send(new EditCommentRequest
@@ -43,6 +49,8 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpDelete("{id:min(1)}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> DeleteComment([FromRoute] int id)
         {
             var result = await Mediator.Send(new DeleteCommentRequest
