@@ -56,8 +56,27 @@ namespace YAFF.Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("user/{userId:min(1)}")]
+        [ProducesResponseType(typeof(PagedList<PostListItemDto>), 200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 404)]
+        public async Task<IActionResult> GetUserPosts([FromRoute] int userId, [FromQuery] PaginationDto pagination)
+        {
+            var result = await Mediator.Send(new GetUserPostsQuery
+            {
+                UserId = userId,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize
+            });
+
+            return result.Succeeded
+                ? Ok(result.ToApiResponse())
+                : NotFound(result.ToApiError());
+        }
+
+
+        [AllowAnonymous]
         [HttpGet("{postId:min(1)}/comments")]
-        [ProducesResponseType(typeof(PagedList<CommentDto>),200)]
+        [ProducesResponseType(typeof(PagedList<CommentDto>), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 404)]
         public async Task<IActionResult> Comments([FromRoute] int postId, [FromQuery] PaginationDto request)
         {
@@ -74,7 +93,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(PostDto),200)]
+        [ProducesResponseType(typeof(PostDto), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> CreatePost([FromForm] PostDto dto)
         {
@@ -94,7 +113,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
-        [ProducesResponseType(typeof(PostDto),200)]
+        [ProducesResponseType(typeof(PostDto), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromForm] PostDto dto)
         {

@@ -1,31 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace YAFF.Core.Common
 {
-    public class PagedList<T> : IEnumerable<T>
+    public class PagedList<T>
     {
-        private readonly IEnumerable<T> _entities;
+        public IEnumerable<T> Items { get; }
         public int Page { get; }
         public int PageSize { get; }
         public int TotalPages { get; }
 
-        public PagedList(IEnumerable<T> entities, int page, int pageSize, int totalPages)
+        public PagedList(IEnumerable<T> items, int page, int pageSize, int totalPages)
         {
-            _entities = entities;
+            Items = items;
             Page = page;
             PageSize = pageSize;
             TotalPages = totalPages;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _entities.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }
