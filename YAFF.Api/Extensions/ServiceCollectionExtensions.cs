@@ -21,7 +21,8 @@ namespace YAFF.Api.Extensions
             {
                 o.AddDefaultPolicy(builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder
+                        .AllowAnyOrigin()
                         .WithMethods("GET", "POST", "PUT", "DELETE")
                         .AllowAnyHeader();
                 });

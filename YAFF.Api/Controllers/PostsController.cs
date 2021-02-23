@@ -149,7 +149,7 @@ namespace YAFF.Api.Controllers
                 : Ok();
         }
 
-        [HttpPost("{postId:min(1)}")]
+        [HttpPost("{postId:min(1)}/likes")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> AddLikeToPost([FromRoute] int postId)
@@ -164,7 +164,7 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse());
         }
 
-        [HttpDelete("{postId:min(1)}")]
+        [HttpDelete("{postId:min(1)}/likes")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> RemoveLikeFromPost([FromRoute] int postId)
