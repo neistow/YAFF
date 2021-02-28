@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using YAFF.Api.Hubs;
+using YAFF.Api.Hubs.Common;
 using YAFF.Core.Configs;
 using YAFF.Core.Entities.Identity;
 using YAFF.Data;
@@ -21,9 +25,11 @@ namespace YAFF.Api.Extensions
             {
                 o.AddDefaultPolicy(builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder
+                        .WithOrigins("http://192.168.0.84:8080")
                         .WithMethods("GET", "POST", "PUT", "DELETE")
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
         }
@@ -50,6 +56,20 @@ namespace YAFF.Api.Extensions
                     ValidateAudience = true,
                     ValidAudience = jwtConfig.Audience,
                     ValidateLifetime = true
+                };
+                o.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        var accessToken = ctx.Request.Query["access_token"];
+                        var path = ctx.HttpContext.Request.Path;
+                        if (!string.IsNullOrWhiteSpace(accessToken) && path.StartsWithSegments("/chathub"))
+                        {
+                            ctx.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }
@@ -88,6 +108,12 @@ namespace YAFF.Api.Extensions
                 .AddEntityFrameworkStores<ForumDbContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider)
                 .AddSignInManager<SignInManager<User>>();
+        }
+
+        public static void ConfigureSignalR(this IServiceCollection services)
+        {
+            services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, UserIdProvider>();
         }
     }
 }

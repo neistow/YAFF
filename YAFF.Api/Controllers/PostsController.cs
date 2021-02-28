@@ -14,6 +14,7 @@ using YAFF.Business.Queries.Posts;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
 using PostDto = YAFF.Api.DTO.Post.PostDto;
+using PostDtoCore = YAFF.Core.DTO.PostDto;
 
 namespace YAFF.Api.Controllers
 {
@@ -45,7 +46,7 @@ namespace YAFF.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id:min(1)}")]
-        [ProducesResponseType(typeof(PostDto), 200)]
+        [ProducesResponseType(typeof(PostDtoCore), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> GetPost([FromRoute] int id)
         {
@@ -74,7 +75,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(PostDto),200)]
+        [ProducesResponseType(typeof(PostDtoCore),200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> CreatePost([FromForm] PostDto dto)
         {
@@ -94,7 +95,7 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
-        [ProducesResponseType(typeof(PostDto),200)]
+        [ProducesResponseType(typeof(PostDtoCore),200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromForm] PostDto dto)
         {

@@ -45,11 +45,23 @@ namespace YAFF.Core.Mapper
                     o => o.MapFrom(p => p.Author))
                 .ForMember(p => p.Tags,
                     o => o.MapFrom(p => p.PostTags.Select(t => t.Tag.Name)))
-                .ForMember(p => p.LikesCount,o => o.MapFrom(p => p.PostLikes.Count()))
+                .ForMember(p => p.LikesCount, o => o.MapFrom(p => p.PostLikes.Count()))
                 .ForMember(p => p.Preview,
                     o => o.MapFrom(p => p.Preview));
 
             CreateMap<Comment, CommentDto>();
+
+            CreateMap<ChatMessage, ChatMessageDto>();
+
+            CreateMap<ChatUser, ChatUserDto>()
+                .ForMember(cu => cu.UserName,
+                    o => o.MapFrom(cu => cu.User.UserName))
+                .ForMember(cu => cu.Avatar,
+                    o => o.MapFrom(cu => $"files/pictures/{cu.User.Profile.Avatar.FileName}"));
+
+            CreateMap<Chat, ChatInfoDto>()
+                .ForMember(ci => ci.ChatUsers,
+                    o => o.MapFrom(c => c.Users));
         }
     }
 }

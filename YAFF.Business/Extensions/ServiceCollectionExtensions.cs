@@ -6,24 +6,12 @@ namespace YAFF.Business.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddPhotoStorage(this IServiceCollection services)
+        public static void AddBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<IPhotoStorage, FileSystemPhotoStorage>();
-        }
-
-        public static void AddImageProcessor(this IServiceCollection services)
-        {
             services.AddScoped<IImageProcessor, ImageProcessor>();
-        }
-
-        public static void AddPhotoValidator(this IServiceCollection services)
-        {
             services.AddScoped<IPhotoValidator, PhotoValidator>();
-        }
-
-        public static void AddEmailSender(this IServiceCollection services)
-        {
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailSender, FakeEmailSender>();
         }
     }
 }

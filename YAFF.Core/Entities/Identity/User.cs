@@ -14,5 +14,6 @@ namespace YAFF.Core.Entities.Identity
         public IEnumerable<Post> Posts { get; set; } = new List<Post>();
         public IEnumerable<Comment> PostComments { get; set; } = new List<Comment>();
         public IEnumerable<PostLike> LikedPosts { get; set; } = new List<PostLike>();
+        public IEnumerable<ChatUser> Chats { get; set; } = new List<ChatUser>();
     }
 }

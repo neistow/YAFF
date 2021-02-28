@@ -1,4 +1,6 @@
-﻿namespace YAFF.Core.Common
+﻿using System;
+
+namespace YAFF.Core.Common
 {
     /// <summary>
     /// Class that represent a result of an operation
@@ -18,7 +20,6 @@
             Field = field;
             Message = message;
         }
-
 
         public static Result<T> Success(T data = default)
         {

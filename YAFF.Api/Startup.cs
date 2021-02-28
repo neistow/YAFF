@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using YAFF.Api.Extensions;
+using YAFF.Api.Hubs;
 using YAFF.Business.Commands.Auth;
 using YAFF.Business.Extensions;
 using YAFF.Core.Entities.Identity;
@@ -65,14 +67,13 @@ namespace YAFF.Api
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(MapperConfig).Assembly);
             services.AddMediatR(typeof(Startup).Assembly, typeof(RegisterUserCommandHandler).Assembly);
 
+            services.ConfigureSignalR();
+
             services.Configure<PhotoProcessorSettings>(Configuration.GetSection("PhotoProcessorSettings"));
             services.Configure<PhotoSettings>(Configuration.GetSection("PhotoSettings"));
             services.Configure<EmailSettings>(Configuration.GetSection("SmtpSettings"));
 
-            services.AddPhotoStorage();
-            services.AddImageProcessor();
-            services.AddPhotoValidator();
-            services.AddEmailSender();
+            services.AddBusinessServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -110,7 +111,11 @@ namespace YAFF.Api
             app.UseAuthorization();
             app.UseLockoutMiddleware();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chathub");
+            });
         }
     }
 }

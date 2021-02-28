@@ -76,6 +76,26 @@ namespace YAFF.Data.Extensions
         }
 
         /// <summary>
+        /// Includes users of the chat
+        /// </summary>
+        /// <param name="chats"></param>
+        /// <returns></returns>
+        public static IQueryable<Chat> IncludeUsers(this IQueryable<Chat> chats)
+        {
+            return chats.Include(c => c.Users).ThenInclude(cu => cu.User);
+        }
+
+        /// <summary>
+        /// Includes messages of the chat
+        /// </summary>
+        /// <param name="chats"></param>
+        /// <returns></returns>
+        public static IQueryable<Chat> IncludeMessages(this IQueryable<Chat> chats)
+        {
+            return chats.Include(c => c.Messages);
+        }
+
+        /// <summary>
         /// Performs a pagination on a generic collection
         /// </summary>
         /// <param name="entities"></param>
