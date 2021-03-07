@@ -32,37 +32,36 @@ namespace YAFF.Business.Queries.Comments
             _mapper = mapper;
         }
 
-        public async Task<Result<PagedList<CommentDto>>> Handle(GetCommentsOfPostQuery query,
-            CancellationToken cancellationToken)
+        public async Task<Result<PagedList<CommentDto>>> Handle(GetCommentsOfPostQuery request, CancellationToken cancellationToken)
         {
-            var post = await _forumDbContext.Posts.FindAsync(query.PostId);
+            var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
             {
-                return Result<PagedList<CommentDto>>.Failure(nameof(query.PostId), "Post doesn't exist.");
+                return Result<PagedList<CommentDto>>.Failure(nameof(request.PostId), "Post doesn't exist.");
             }
 
             var comments = await _forumDbContext.Comments
                 .IncludeAuthor()
-                .Where(c => c.PostId == query.PostId)
+                .Where(c => c.PostId == request.PostId)
                 .OrderByDescending(c => c.DateAdded)
-                .Paginate(query.Page, query.PageSize)
+                .Paginate(request.Page, request.PageSize)
                 .AsNoTracking()
                 .ToListAsync();
             var allCommentsCount = await _forumDbContext.Comments
-                .Where(c => c.PostId == query.PostId)
+                .Where(c => c.PostId == request.PostId)
                 .CountAsync();
 
-            if (!comments.Any())
+            if (!comments.Any() && request.Page > 1)
             {
-                return Result<PagedList<CommentDto>>.Failure(nameof(query.Page), "No comments found");
+                return Result<PagedList<CommentDto>>.Failure(nameof(request.Page), "No comments found");
             }
 
             var result = _mapper.Map<IEnumerable<CommentDto>>(comments);
             return Result<PagedList<CommentDto>>.Success(
                 result.ToPagedList(
-                    query.Page,
-                    query.PageSize,
-                    (int) Math.Ceiling(allCommentsCount / (double) query.PageSize)));
+                    request.Page,
+                    request.PageSize,
+                    (int) Math.Ceiling(allCommentsCount / (double) request.PageSize)));
         }
     }
 }

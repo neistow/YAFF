@@ -54,7 +54,7 @@ namespace YAFF.Business.Queries.Posts
                 .ToListAsync();
             var allPostsCount = await _forumDbContext.Posts.Where(spec.Expression).CountAsync();
 
-            if (!posts.Any())
+            if (!posts.Any() && request.Page > 1)
             {
                 return Result<PagedList<PostListItemDto>>.Failure(nameof(request.Page), "No records found");
             }
