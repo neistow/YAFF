@@ -40,7 +40,7 @@ namespace YAFF.Business.Queries.Tags
 
             var allTagsCount = await _forumDbContext.Tags.CountAsync();
 
-            if (!tags.Any())
+            if (!tags.Any() && request.Page > 1)
             {
                 return Result<TagListDto>.Failure(nameof(request.Page), "No records found");
             }
