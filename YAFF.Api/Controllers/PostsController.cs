@@ -13,7 +13,7 @@ using YAFF.Business.Queries.Comments;
 using YAFF.Business.Queries.Posts;
 using YAFF.Core.Common;
 using YAFF.Core.DTO;
-using PostDto = YAFF.Api.DTO.Post.PostDto;
+using PostDto = YAFF.Core.DTO.PostDto;
 
 namespace YAFF.Api.Controllers
 {
@@ -95,7 +95,7 @@ namespace YAFF.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(PostDto), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
-        public async Task<IActionResult> CreatePost([FromForm] PostDto dto)
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
         {
             var result = await Mediator.Send(new CreatePostRequest
             {
@@ -115,7 +115,7 @@ namespace YAFF.Api.Controllers
         [HttpPut("{id:min(1)}")]
         [ProducesResponseType(typeof(PostDto), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
-        public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromForm] PostDto dto)
+        public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromForm] UpdatePostDto dto)
         {
             var result = await Mediator.Send(new UpdatePostCommand
             {

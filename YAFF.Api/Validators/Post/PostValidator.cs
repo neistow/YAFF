@@ -5,7 +5,7 @@ using YAFF.Api.DTO.Post;
 
 namespace YAFF.Api.Validators.Post
 {
-    public class PostValidator : AbstractValidator<PostDto>
+    public abstract class PostValidator<T> : AbstractValidator<T> where T : PostDto
     {
         public PostValidator()
         {
@@ -18,7 +18,6 @@ namespace YAFF.Api.Validators.Post
                 .WithMessage("No duplicate tags allowed");
 
             RuleFor(p => p.PreviewBody).NotEmpty().MinimumLength(100).MaximumLength(256);
-            RuleFor(p => p.PreviewImage).NotNull().WithMessage("Post must have a preview image");
         }
 
         private bool BeUnique(List<string> tags)
