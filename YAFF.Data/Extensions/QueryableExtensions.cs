@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqKit;
+﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using YAFF.Core.Common;
 using YAFF.Core.Entities;
+using YAFF.Core.Entities.Identity;
 
 namespace YAFF.Data.Extensions
 {
@@ -18,7 +14,8 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<Post> IncludeAuthor(this IQueryable<Post> posts)
         {
-            return posts.Include(p => p.Author)
+            return posts
+                .Include(p => p.Author)
                 .ThenInclude(u => u.Profile)
                 .ThenInclude(p => p.Avatar);
         }
@@ -30,7 +27,8 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<Post> IncludeLikes(this IQueryable<Post> posts)
         {
-            return posts.Include(p => p.PostLikes);
+            return posts
+                .Include(p => p.PostLikes);
         }
 
         /// <summary>
@@ -40,7 +38,9 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<Post> IncludeTags(this IQueryable<Post> posts)
         {
-            return posts.Include(p => p.PostTags).ThenInclude(pt => pt.Tag);
+            return posts
+                .Include(p => p.PostTags)
+                .ThenInclude(pt => pt.Tag);
         }
 
         /// <summary>
@@ -50,7 +50,9 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<Post> IncludePreview(this IQueryable<Post> posts)
         {
-            return posts.Include(p => p.Preview).ThenInclude(pp => pp.Image);
+            return posts
+                .Include(p => p.Preview)
+                .ThenInclude(pp => pp.Image);
         }
 
         /// <summary>
@@ -60,7 +62,8 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<Comment> IncludeAuthor(this IQueryable<Comment> comments)
         {
-            return comments.Include(c => c.Author)
+            return comments
+                .Include(c => c.Author)
                 .ThenInclude(u => u.Profile)
                 .ThenInclude(p => p.Avatar);
         }
@@ -72,27 +75,34 @@ namespace YAFF.Data.Extensions
         /// <returns></returns>
         public static IQueryable<UserProfile> IncludeUser(this IQueryable<UserProfile> profiles)
         {
-            return profiles.Include(p => p.User).Include(p => p.Avatar);
+            return profiles
+                .Include(p => p.User)
+                .Include(p => p.Avatar);
         }
 
         /// <summary>
-        /// Includes users of the chat
+        /// Includes users of the chat with their profiles and avatars
         /// </summary>
         /// <param name="chats"></param>
         /// <returns></returns>
-        public static IQueryable<Chat> IncludeUsers(this IQueryable<Chat> chats)
+        public static IQueryable<Chat> IncludeUsersWithProfiles(this IQueryable<Chat> chats)
         {
-            return chats.Include(c => c.Users).ThenInclude(cu => cu.User);
+            return chats.Include(c => c.Users)
+                .ThenInclude(cu => cu.User)
+                .ThenInclude(u => u.Profile)
+                .ThenInclude(up => up.Avatar);
         }
 
         /// <summary>
-        /// Includes messages of the chat
+        /// Includes user with profile and avatar
         /// </summary>
-        /// <param name="chats"></param>
+        /// <param name="users"></param>
         /// <returns></returns>
-        public static IQueryable<Chat> IncludeMessages(this IQueryable<Chat> chats)
+        public static IQueryable<User> IncludeProfile(this IQueryable<User> users)
         {
-            return chats.Include(c => c.Messages);
+            return users
+                .Include(u => u.Profile)
+                .ThenInclude(up => up.Avatar);
         }
 
         /// <summary>

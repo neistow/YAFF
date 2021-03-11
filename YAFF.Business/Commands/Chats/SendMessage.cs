@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -34,19 +33,16 @@ namespace YAFF.Business.Commands.Chats
         public async Task<Result<ChatMessageDto>> Handle(SendMessageCommand request,
             CancellationToken cancellationToken)
         {
-            var chat = await _forumDbContext.Chats
-                .IncludeUsers()
-                .SingleOrDefaultAsync(c => c.Id == request.ChatId);
-            if (chat == null)
+            var chatUser = await _forumDbContext.ChatUsers.FindAsync(request.ChatId, request.SenderId);
+            if (chatUser == null)
             {
-                return Result<ChatMessageDto>.Failure(nameof(request.ChatId), "Chat doesn't exist");
+                return Result<ChatMessageDto>.Failure(nameof(request.ChatId),
+                    "You are not a participant of this chat or chat doesn't exist");
             }
 
-            var user = chat.Users.SingleOrDefault(cu => cu.UserId == request.SenderId);
-            if (user == null)
-            {
-                return Result<ChatMessageDto>.Failure(nameof(request.ChatId), "You are not a participant of this chat");
-            }
+            var chat = await _forumDbContext.Chats
+                .IncludeUsersWithProfiles()
+                .SingleAsync(c => c.Id == request.ChatId);
 
             var message = new ChatMessage
             {

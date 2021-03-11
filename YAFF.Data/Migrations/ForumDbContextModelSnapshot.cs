@@ -127,12 +127,15 @@ namespace YAFF.Data.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Chat");
                 });
 
             modelBuilder.Entity("YAFF.Core.Entities.ChatMessage", b =>
@@ -147,9 +150,6 @@ namespace YAFF.Data.Migrations
 
                     b.Property<DateTime>("DateSent")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("Seen")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("SenderId")
                         .HasColumnType("integer");
@@ -468,6 +468,23 @@ namespace YAFF.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("YAFF.Core.Entities.GroupChat", b =>
+                {
+                    b.HasBaseType("YAFF.Core.Entities.Chat");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("GroupChat");
+                });
+
+            modelBuilder.Entity("YAFF.Core.Entities.PrivateChat", b =>
+                {
+                    b.HasBaseType("YAFF.Core.Entities.Chat");
+
+                    b.HasDiscriminator().HasValue("PrivateChat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

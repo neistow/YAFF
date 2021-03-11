@@ -2,7 +2,7 @@
 
 namespace YAFF.Api.DTO.Profile
 {
-    public record EditProfileDto
+    public record UpdateProfileDto
     {
         public string Bio { get; init; }
         public string UserStatus { get; init; }

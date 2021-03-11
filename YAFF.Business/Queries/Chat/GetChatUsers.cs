@@ -31,7 +31,8 @@ namespace YAFF.Business.Queries.Chat
             CancellationToken cancellationToken)
         {
             var chat = await _forumDbContext.Chats
-                .IncludeUsers()
+                .IncludeUsersWithProfiles()
+                .AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == request.ChatId);
             if (chat == null)
             {

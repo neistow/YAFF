@@ -8,7 +8,6 @@ namespace YAFF.Core.Entities
         public int Id { get; set; }
 
         public DateTime DateSent { get; set; }
-        public bool Seen { get; set; }
         public string Text { get; set; }
 
         public int SenderId { get; set; }

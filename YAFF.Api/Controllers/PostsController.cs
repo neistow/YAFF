@@ -149,7 +149,7 @@ namespace YAFF.Api.Controllers
                 : Ok();
         }
 
-        
+
         [HttpPost("{postId:min(1)}/likes")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
@@ -165,7 +165,7 @@ namespace YAFF.Api.Controllers
                 : Ok(result.ToApiResponse());
         }
 
-        
+
         [HttpDelete("{postId:min(1)}/likes")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]

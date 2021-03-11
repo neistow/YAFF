@@ -37,14 +37,13 @@ namespace YAFF.Api.Controllers
                 : BadRequest(result.ToApiError());
         }
 
-        [HttpGet("{chatId}")]
-        [ProducesResponseType(typeof(ChatInfoDto),200)]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<ChatInfoDto>), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
-        public async Task<IActionResult> GetChatInfo([FromRoute] int chatId)
+        public async Task<IActionResult> GetUserChats()
         {
-            var result = await Mediator.Send(new GetChatInfoRequest
+            var result = await Mediator.Send(new GetUserChatsRequest
             {
-                ChatId = chatId,
                 UserId = CurrentUserId!.Value
             });
 
@@ -54,15 +53,37 @@ namespace YAFF.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ChatInfoDto),200)]
+        [ProducesResponseType(typeof(ChatInfoDto), 200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
         public async Task<IActionResult> CreateChat([FromBody] CreateChatDto dto)
         {
-            var result = await Mediator.Send(new CreateChatCommand
+            var result = dto.IsPrivate
+                ? await Mediator.Send(new CreatePrivateChatCommand
+                {
+                    CreatorId = CurrentUserId!.Value,
+                    PartnerId = dto.ChatUsers[0]
+                })
+                : await Mediator.Send(new CreateGroupChatCommand
+                {
+                    CreatorId = CurrentUserId!.Value,
+                    Title = dto.Title,
+                    ChatUsers = dto.ChatUsers
+                });
+
+            return result.Succeeded
+                ? Ok(result.ToApiResponse())
+                : BadRequest(result.ToApiError());
+        }
+
+        [HttpPost("{chatId}/leave")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
+        public async Task<IActionResult> LeaveChat([FromRoute] int chatId)
+        {
+            var result = await Mediator.Send(new LeaveChatCommand
             {
-                CreatorId = CurrentUserId!.Value,
-                IsPrivate = dto.IsPrivate,
-                Users = dto.ChatUsers
+                ChatId = chatId,
+                UserId = CurrentUserId!.Value
             });
 
             return result.Succeeded

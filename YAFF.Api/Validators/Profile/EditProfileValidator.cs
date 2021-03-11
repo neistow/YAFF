@@ -3,7 +3,7 @@ using YAFF.Api.DTO.Profile;
 
 namespace YAFF.Api.Validators.Profile
 {
-    public class EditProfileValidator : AbstractValidator<EditProfileDto>
+    public class EditProfileValidator : AbstractValidator<UpdateProfileDto>
     {
         public EditProfileValidator()
         {

@@ -47,8 +47,9 @@ namespace YAFF.Business.Queries.Chat
 
             var messages = await _forumDbContext.ChatMessages
                 .Where(cm => cm.ChatId == request.ChatId)
-                .OrderBy(cm => cm.DateSent)
+                .OrderByDescending(cm => cm.DateSent)
                 .Paginate(request.Page, request.PageSize)
+                .Reverse()
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -56,7 +57,7 @@ namespace YAFF.Business.Queries.Chat
                 .Where(cm => cm.ChatId == request.ChatId)
                 .CountAsync();
 
-            if (!messages.Any())
+            if (!messages.Any() && request.Page > 1)
             {
                 return Result<PagedList<ChatMessageDto>>.Failure(nameof(request.Page), "No messages found");
             }
@@ -65,7 +66,7 @@ namespace YAFF.Business.Queries.Chat
             return Result<PagedList<ChatMessageDto>>.Success(
                 result.ToPagedList(request.Page,
                     request.PageSize,
-                    (int) Math.Ceiling(allMessagesCount / (double) request.PageSize)));
+                    allMessagesCount));
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace YAFF.Api.Validators.Post
 {
-    public class EditPostValidator : PostValidator<UpdatePostDto>
+    public class UpdatePostValidator : PostValidator<UpdatePostDto>
     {
     }
 }

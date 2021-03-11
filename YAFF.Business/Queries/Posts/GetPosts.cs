@@ -65,7 +65,7 @@ namespace YAFF.Business.Queries.Posts
                 postDtos.ToPagedList(
                     request.Page,
                     request.PageSize,
-                    (int) Math.Ceiling(allPostsCount / (double) request.PageSize)));
+                    allPostsCount));
         }
     }
 }

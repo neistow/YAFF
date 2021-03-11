@@ -6,7 +6,8 @@ namespace YAFF.Core.DTO
     {
         public int Id { get; set; }
         public bool IsPrivate { get; set; }
+        public string Title { get; set; }
 
-        public List<ChatUserDto> ChatUsers { get; set; }
+        public List<ChatUserDto> Users { get; set; }
     }
 }

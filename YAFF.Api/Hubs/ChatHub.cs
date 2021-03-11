@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MediatR;
@@ -27,8 +26,7 @@ namespace YAFF.Api.Hubs
             {
                 throw new HubException(JsonSerializer.Serialize(validationResult.Errors));
             }
-            
-            
+
             var result = await Mediator.Send(new SendMessageCommand
             {
                 ChatId = message.ChatId,
@@ -47,11 +45,6 @@ namespace YAFF.Api.Hubs
 
             var usersIds = usersResult.Data.Select(u => u.UserId.ToString()).ToList();
             await Clients.Users(usersIds).ReceiveMessage(result.Data);
-        }
-
-        public async Task ReadMessages(List<int> messagesIds)
-        {
-            
         }
     }
 }

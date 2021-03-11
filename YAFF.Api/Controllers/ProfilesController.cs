@@ -39,7 +39,7 @@ namespace YAFF.Api.Controllers
         [HttpPut]
         [ProducesResponseType(typeof(UserProfileDto),200)]
         [ProducesResponseType(typeof(IDictionary<string, IEnumerable<string>>), 400)]
-        public async Task<IActionResult> UpdateProfile(EditProfileDto profileDto)
+        public async Task<IActionResult> UpdateProfile(UpdateProfileDto profileDto)
         {
             var result = await Mediator.Send(new EditProfileCommand
             {

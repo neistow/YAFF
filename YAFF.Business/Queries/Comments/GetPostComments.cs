@@ -32,7 +32,8 @@ namespace YAFF.Business.Queries.Comments
             _mapper = mapper;
         }
 
-        public async Task<Result<PagedList<CommentDto>>> Handle(GetCommentsOfPostQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<CommentDto>>> Handle(GetCommentsOfPostQuery request,
+            CancellationToken cancellationToken)
         {
             var post = await _forumDbContext.Posts.FindAsync(request.PostId);
             if (post == null)
@@ -61,7 +62,7 @@ namespace YAFF.Business.Queries.Comments
                 result.ToPagedList(
                     request.Page,
                     request.PageSize,
-                    (int) Math.Ceiling(allCommentsCount / (double) request.PageSize)));
+                    allCommentsCount));
         }
     }
 }
