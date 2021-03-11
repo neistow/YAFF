@@ -9,7 +9,6 @@ namespace YAFF.Api.Validators.Chat
     {
         public CreateChatValidator()
         {
-            RuleFor(c => c.Title).NotEmpty().WithMessage("Group chat must have a title");
             RuleFor(c => c.ChatUsers).NotEmpty().WithMessage("Chat should have at least one member");
             RuleFor(c => c.ChatUsers).Must(BeUnique).WithMessage("Chat can't have duplicate members");
             When(c => c.IsPrivate,
@@ -19,6 +18,7 @@ namespace YAFF.Api.Validators.Chat
                     RuleFor(c => c.ChatUsers.Count).Equal(1)
                         .WithMessage("Private chat can contain only one user (not including you)");
                 });
+            When(c => !c.IsPrivate, () => { RuleFor(c => c.Title).NotEmpty().WithMessage("Group chat must have a title"); });
         }
 
         private bool BeUnique(List<int> users)
