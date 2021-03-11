@@ -59,9 +59,11 @@ namespace YAFF.Core.Mapper
                 .ForMember(cu => cu.Avatar,
                     o => o.MapFrom(cu => $"files/pictures/{cu.User.Profile.Avatar.FileName}"));
 
-            CreateMap<Chat, ChatInfoDto>()
-                .ForMember(ci => ci.ChatUsers,
-                    o => o.MapFrom(c => c.Users));
+            CreateMap<PrivateChat, ChatInfoDto>()
+                .ForMember(ci => ci.IsPrivate, o => o.MapFrom(pc => true));
+
+            CreateMap<GroupChat, ChatInfoDto>()
+                .ForMember(ci => ci.IsPrivate, o => o.MapFrom(gc => false));
         }
     }
 }

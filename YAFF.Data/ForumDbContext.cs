@@ -16,6 +16,8 @@ namespace YAFF.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<Chat> Chats { get; set; }
+        public DbSet<PrivateChat> PrivateChats { get; set; }
+        public DbSet<GroupChat> GroupChats { get; set; }
         public DbSet<ChatUser> ChatUsers { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
